@@ -18,8 +18,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
-@Table(name="FANADS", catalog="isadb")
+@Table(name="FANADS")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class FanAd {
 	private Integer id;
 	private String name;
@@ -66,6 +72,7 @@ public class FanAd {
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
+	@JsonManagedReference(value="ads_users")
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
 	public User getPostedBy() {

@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 		// TODO Auto-generated method stub
 		try{
 			return sessionFactory.getCurrentSession()
-					.get(entitiyClass, keyClass);
+								 .get(entitiyClass, keyClass.cast(id));
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
 		}
@@ -100,7 +101,9 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	public void delete(Entity entity) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
-			sessionFactory.getCurrentSession().delete(entity);
+			Session session = sessionFactory.getCurrentSession();
+			session.delete(session.contains(entity) ? entity : session.merge(entity));
+			//sessionFactory.getCurrentSession().delete(entity);
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
 		}

@@ -13,7 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.util.List;
 
 @Entity
-@Table(name="HALLSEGMENTS", catalog="isadb")
+@Table(name="HALLSEGMENTS")
 public class HallSegment {
 	private Integer id;
 	private Hall hall;

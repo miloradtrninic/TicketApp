@@ -1,4 +1,4 @@
-package com.msmisa.TikcetApp.dao.fan;
+package com.msmisa.TicketApp.dao.fan;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import com.msmisa.TicketApp.dao.AbstractGenericDao;
 
 @Repository
 @Transactional
-public class BidDaoImpl  extends AbstractGenericDao<Bid, Integer> implements BidDao {
+public class BidDaoImpl extends AbstractGenericDao<Bid, Integer> implements BidDao {
 
 	@Autowired
 	public BidDaoImpl(SessionFactory sessionFactory) {

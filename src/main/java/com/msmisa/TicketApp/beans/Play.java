@@ -11,7 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SecondaryTable;
 
 @Entity
-@SecondaryTable(name="PLAYS", catalog="isadb")
+@SecondaryTable(name="PLAYS")
 public class Play extends Projection {
 	private List<Theatre> theatre;
 

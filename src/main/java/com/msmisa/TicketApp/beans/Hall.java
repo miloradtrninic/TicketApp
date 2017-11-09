@@ -17,7 +17,7 @@ import org.hibernate.annotations.CascadeType;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="HALLS", catalog="isadb")
+@Table(name="HALLS")
 public class Hall {
 	private Integer id;
 	private String name;

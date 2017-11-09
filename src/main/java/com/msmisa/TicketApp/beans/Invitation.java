@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="INVITATIONS", catalog="isadb")
+@Table(name="INVITATIONS")
 public class Invitation {
 	
 	private Integer id;

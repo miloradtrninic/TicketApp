@@ -6,11 +6,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 
 @Entity
-@Table(name="BIDS", catalog="isadb")
+@Table(name="BIDS")
 public class Bid {
 	private Integer id;
 	//private User toUser; iz fanAd se vidi kome je
@@ -27,7 +30,7 @@ public class Bid {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+	@JsonManagedReference(value="bids_user")
 	@ManyToOne
 	@JoinColumn(name="FROM_USER", nullable=false)
 	public User getFromUser() {

@@ -10,7 +10,7 @@ import com.msmisa.TicketApp.dao.AbstractGenericDao;
 
 @Repository
 @Transactional
-public class ReservationDaoImpl extends AbstractGenericDao<Reservation, Integer> {
+public class ReservationDaoImpl extends AbstractGenericDao<Reservation, Integer> implements ReservationDao{
 
 	@Autowired
 	public ReservationDaoImpl(SessionFactory sessionFactory) {

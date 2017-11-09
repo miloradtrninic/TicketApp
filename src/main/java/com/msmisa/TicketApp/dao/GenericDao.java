@@ -2,6 +2,7 @@ package com.msmisa.TicketApp.dao;
 
 import java.util.List;
 
+
 public interface GenericDao<Entity,Key>  {
 
 	List<Entity> getAll() throws DaoException;

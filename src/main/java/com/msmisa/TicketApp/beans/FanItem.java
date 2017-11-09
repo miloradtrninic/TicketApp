@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="FANITEMS", catalog="isadb")
+@Table(name="FANITEMS")
 public class FanItem {
 	private Integer id;
 	private Projection projection;

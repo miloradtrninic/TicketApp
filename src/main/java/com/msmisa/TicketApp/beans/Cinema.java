@@ -16,7 +16,7 @@ import org.hibernate.annotations.CascadeType;
 
 
 @Entity
-@SecondaryTable(name="CINEMAS", catalog="isadb")
+@SecondaryTable(name="CINEMAS")
 public class Cinema extends Auditorium {
 	private List<Movie> moviesRepertory;
 	

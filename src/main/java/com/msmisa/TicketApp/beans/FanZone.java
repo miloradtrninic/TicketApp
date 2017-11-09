@@ -17,7 +17,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 @Entity
-@Table(name="FANZONES", catalog="isadb")
+@Table(name="FANZONES")
 public class FanZone {
 	private Integer id;
 	private User admin;

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="MEMBERSHIPS", catalog="isadb")
+@Table(name="MEMBERSHIPS")
 public class Membership {
 	private Integer id;
 	private String name;

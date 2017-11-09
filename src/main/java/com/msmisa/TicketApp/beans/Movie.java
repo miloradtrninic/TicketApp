@@ -9,7 +9,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SecondaryTable;
 
 @Entity
-@SecondaryTable(name="MOVIES", catalog="isadb")
+@SecondaryTable(name="MOVIES")
 public class Movie extends Projection {
 	private List<Cinema> cinemaList;
 

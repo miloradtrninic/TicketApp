@@ -10,7 +10,7 @@ import com.msmisa.TicketApp.dao.AbstractGenericDao;
 
 @Repository
 @Transactional
-public class HallSegmentDaoImpl extends AbstractGenericDao<HallSegment, Integer> {
+public class HallSegmentDaoImpl extends AbstractGenericDao<HallSegment, Integer> implements HallSegmentDao {
 
 	@Autowired
 	public HallSegmentDaoImpl(SessionFactory sessionFactory) {

@@ -16,7 +16,6 @@ public class CinemaDaoImpl extends AbstractGenericDao<Cinema, Integer> implement
 	@Autowired
 	public CinemaDaoImpl(SessionFactory sessionFactory) {
 		super(sessionFactory);
-		// TODO Auto-generated constructor stub
 	} 
 
 }

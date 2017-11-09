@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="RESERVATIONS", catalog="isadb")
+@Table(name="RESERVATIONS")
 public class Reservation {
 	private Integer id;
 	private User reservedBy;

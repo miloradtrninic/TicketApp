@@ -14,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 
 @Entity
-@Table(name="TICKETS", catalog="isadb")
+@Table(name="TICKETS")
 public class Ticket {
 	private Projection projection;
 	private Integer id;

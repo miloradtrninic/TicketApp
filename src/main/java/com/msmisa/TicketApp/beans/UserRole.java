@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="USER_ROLE", catalog="isadb")
+@Table(name="USER_ROLE")
 public class UserRole {
 	private Integer id;
 	private String name;

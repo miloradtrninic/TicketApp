@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="SEATINGS", catalog="isadb")
+@Table(name="SEATINGS")
 public class Seating {
 	private Integer id;
 	private Integer row;

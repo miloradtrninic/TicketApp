@@ -1,5 +1,7 @@
 package com.msmisa.TicketApp.beans;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.List;
 
 import javax.persistence.Column;
@@ -15,11 +17,18 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.msmisa.TicketApp.json.CustomUserSerializer;
 
 @Entity
-@Table(name="USERS", catalog="isadb")
+@Table(name="USERS")
+//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class User {
 	private Integer id;
 	private String email;
@@ -45,6 +54,8 @@ public class User {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	
+	@Column(nullable=false, unique=true)
 	public String getEmail() {
 		return email;
 	}
@@ -75,6 +86,9 @@ public class User {
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
 	}
+	@JsonInclude(Include.NON_NULL)
+	@JsonSerialize(using=CustomUserSerializer.class)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany
 	@JoinTable(name="FRIENDS", joinColumns=@JoinColumn(name="personID"), inverseJoinColumns=@JoinColumn(name="friendID"))
 	public List<User> getFriends() {
@@ -83,14 +97,20 @@ public class User {
 	public void setFriends(List<User> friends) {
 		this.friends = friends;
 	}
-	@ManyToMany
-	@JoinTable(name="FRIENDS", joinColumns=@JoinColumn(name="friendID"), inverseJoinColumns=@JoinColumn(name="personID"))
+	
+	@JsonInclude(Include.NON_NULL)
+	@JsonSerialize(using=CustomUserSerializer.class)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(mappedBy="friends")
 	public List<User> getFriendOf() {
 		return friendOf;
 	}
 	public void setFriendOf(List<User> friendOf) {
 		this.friendOf = friendOf;
 	}
+	@JsonInclude(Include.NON_NULL)
+	@JsonSerialize(using=CustomUserSerializer.class)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany
 	@JoinTable(name="FRIEND_REQUESTS", joinColumns=@JoinColumn(name="personID"), inverseJoinColumns=@JoinColumn(name="friendID"))
 	public List<User> getFriendRequests() {
@@ -99,8 +119,10 @@ public class User {
 	public void setFriendRequests(List<User> friendRequests) {
 		this.friendRequests = friendRequests;
 	}
-	@ManyToMany
-	@JoinTable(name="FRIEND_REQUESTS", joinColumns=@JoinColumn(name="friendID"), inverseJoinColumns=@JoinColumn(name="personID"))
+	@JsonInclude(Include.NON_NULL)
+	@JsonSerialize(using=CustomUserSerializer.class)
+	@ManyToMany(mappedBy="friendRequests")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<User> getFriendRequestsSent() {
 		return friendRequestsSent;
 	}
@@ -108,6 +130,9 @@ public class User {
 	public void setFriendRequestsSent(List<User> friendRequestsSent) {
 		this.friendRequestsSent = friendRequestsSent;
 	}
+	
+	@JsonInclude(Include.NON_NULL)
+	@JsonBackReference(value="ads_users")
 	@OneToMany(mappedBy="postedBy")
 	public List<FanAd> getUserAds() {
 		return userAds;
@@ -115,6 +140,9 @@ public class User {
 	public void setUserAds(List<FanAd> userAds) {
 		this.userAds = userAds;
 	}
+	
+	@JsonBackReference(value="bids_user")
+	@JsonInclude(Include.NON_NULL)
 	@OneToMany(mappedBy="fromUser")
 	@Cascade(value=CascadeType.ALL)
 	public List<Bid> getBidList() {
