@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -45,6 +46,7 @@ public class Bid {
 	public void setOffer(String offer) {
 		this.offer = offer;
 	}
+	@JsonBackReference(value="bid_ad")
 	@ManyToOne
 	@JoinColumn(name="FANAD_ID", nullable=false)
 	public FanAd getFanAd() {

@@ -14,6 +14,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -39,6 +42,7 @@ public class Hall {
 	public void setName(String name) {
 		this.name = name;
 	}
+	@JsonBackReference(value="aud_hall")
 	@ManyToOne
 	@JoinColumn(name="AUDITORIUM_ID", nullable=false)
 	public Auditorium getAuditorium() {
@@ -47,6 +51,7 @@ public class Hall {
 	public void setAuditorium(Auditorium auditorium) {
 		this.auditorium = auditorium;
 	}
+	@JsonManagedReference(value="hall_segment")
 	@OneToMany(mappedBy="hall")
 	@Cascade(value=CascadeType.ALL)
 	public List<HallSegment> getHallSegmentList() {

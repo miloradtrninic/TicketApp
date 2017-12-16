@@ -8,6 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.List;
@@ -30,6 +34,7 @@ public class HallSegment {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	@JsonBackReference(value="hall_segment")
 	@ManyToOne
 	@JoinColumn(name="HALL_ID", nullable=false)
 	public Hall getHall() {
@@ -50,6 +55,7 @@ public class HallSegment {
 	public void setSeatingsNo(Integer seatingsNo) {
 		this.seatingsNo = seatingsNo;
 	}
+	@JsonManagedReference(value="segment_seating")
 	@OneToMany(mappedBy="hallSegment")
 	public List<Seating> getSeatingList() {
 		return seatingList;

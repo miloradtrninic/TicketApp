@@ -13,12 +13,14 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -75,6 +77,7 @@ public abstract class Auditorium {
 	public void setFanZone(FanZone fanZone) {
 		this.fanZone = fanZone;
 	}
+	@JsonManagedReference(value="aud_hall")
 	@OneToMany(mappedBy="auditorium")
 	@Cascade(value=CascadeType.ALL)
 	public List<Hall> getHallList() {

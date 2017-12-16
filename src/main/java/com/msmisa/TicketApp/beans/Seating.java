@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -41,6 +44,7 @@ public class Seating {
 		this.number = number;
 	}
 	@ManyToOne
+	@JsonBackReference(value="segment_seating")
 	@JoinColumn(name="HALLSEGMENT_ID", nullable=false)
 	public HallSegment getHallSegment() {
 		return hallSegment;

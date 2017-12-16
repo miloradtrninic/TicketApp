@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -35,6 +38,7 @@ public class FanItem {
 	public void setProjection(Projection projection) {
 		this.projection = projection;
 	}
+	@JsonBackReference(value="zone_item")
 	@ManyToOne
 	@JoinColumn(name="FANZONE_ID", nullable=false)
 	public FanZone getFanzone() {

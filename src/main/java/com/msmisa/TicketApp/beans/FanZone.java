@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name="FANZONES")
 public class FanZone {
@@ -44,6 +46,7 @@ public class FanZone {
 	}
 	
 	@OneToMany(mappedBy="fanzone")
+	@JsonManagedReference(value="zone_item")
 	@Cascade(value=CascadeType.ALL)
 	public List<FanItem> getFanitemList() {
 		return fanitemList;
