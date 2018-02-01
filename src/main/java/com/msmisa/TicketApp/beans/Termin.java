@@ -3,24 +3,42 @@ package com.msmisa.TicketApp.beans;
 import java.sql.Date;
 import java.util.Set;
 
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+
 @Entity
+@Table(name="TERMIN")
 public class Termin {
+	
+	private Integer id;
+	
 	private Projection projection;
 	private Set<Hall> hallList;
 	private Date time;
 	private Integer price;
 	
-
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "TERMIN_ID", unique = true, nullable = false)
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	@ManyToOne(optional=false)
 	public Projection getProjection() {
 		return projection;
