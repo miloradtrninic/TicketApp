@@ -9,8 +9,10 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Repository
 @Transactional
@@ -18,11 +20,8 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 
 	private SessionFactory sessionFactory;
 
-	private Class<Entity> entitiyClass;
+	private Class<Entity> entityClass;
 	private Class<? extends Serializable> keyClass;
-
-
-
 
 	public AbstractGenericDao(SessionFactory sessionFactory) {
 		super();
@@ -34,30 +33,31 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	private void resolveGenericType() {
 		Type t = getClass().getGenericSuperclass();
 		ParameterizedType pt = (ParameterizedType) t;
-		entitiyClass = (Class<Entity>) pt.getActualTypeArguments()[0];
+		entityClass = (Class<Entity>) pt.getActualTypeArguments()[0];
 		keyClass = (Class<? extends Serializable>) pt.getActualTypeArguments()[1];
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@PreAuthorize("hasAuthority(#this.this.className+'_READ_ALL')")
 	public List<Entity> getAll() throws DaoException {
 		try{
 			return sessionFactory.getCurrentSession()
-					.createCriteria(entitiyClass)
+					.createCriteria(entityClass)
 					.list();
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@PreAuthorize("hasAuthority(#this.this.className+'_READ')")
 	public List<Entity> getAll(int firstResult, int maxResults) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
 			return sessionFactory.getCurrentSession()
-					.createCriteria(entitiyClass)
+					.createCriteria(entityClass)
 					.setFirstResult(firstResult)
 					.setMaxResults(maxResults)
 					.list();
@@ -67,17 +67,19 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
+	@PreAuthorize("hasAuthority(#this.this.className+'_GET_ID')")
 	public Entity get(Key id) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
 			return sessionFactory.getCurrentSession()
-								 .get(entitiyClass, keyClass.cast(id));
+								 .get(entityClass, keyClass.cast(id));
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
 		}
 	}
 
 	@Override
+	@PreAuthorize("hasAuthority(#this.this.className+'_ADD')")
 	public Entity insert(Entity entity) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -88,6 +90,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
+	@PreAuthorize("hasAuthority(#this.this.className+'_UPDATE')")
 	public Entity update(Entity entity) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -98,6 +101,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
+	@PreAuthorize("hasAuthority(#this.this.className+'_DELETE')")
 	public void delete(Entity entity) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -117,5 +121,14 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 			throw new DaoException(e.getMessage());
 		}
 	}
+	
+	public String getClassName() {
+		return entityClass.getSimpleName().toUpperCase();
+	}
+
+	protected SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
 
 }

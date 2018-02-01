@@ -8,6 +8,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SecondaryTable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @SecondaryTable(name="MOVIES")
 public class Movie extends Projection {
@@ -15,6 +17,7 @@ public class Movie extends Projection {
 
 	@ManyToMany
 	@JoinTable(name="CINEMA_MOVIE", joinColumns=@JoinColumn(name="MOVIE_ID", nullable=false), inverseJoinColumns=@JoinColumn(name="CINEMA_ID", nullable=false))
+	@JsonIgnore
 	public List<Cinema> getCinemaList() {
 		return cinemaList;
 	}

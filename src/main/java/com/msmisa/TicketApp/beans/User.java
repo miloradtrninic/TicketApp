@@ -2,10 +2,11 @@ package com.msmisa.TicketApp.beans;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,17 +32,18 @@ import com.msmisa.TicketApp.json.CustomUserSerializer;
 //@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class User {
 	private Integer id;
+	private String username;
 	private String email;
 	private String password;
 	private String name, lastname;
 	private String phoneNo;
-	private List<User> friends;
-	private List<User> friendOf;
-	private List<User> friendRequests;
-	private List<User> friendRequestsSent;
-	private List<FanAd> userAds;
-	private List<Bid> bidList;
-	private UserRole userRole;
+	private Set<User> friends;
+	private Set<User> friendOf;
+	private Set<User> friendRequests;
+	private Set<User> friendRequestsSent;
+	private Set<FanAd> userAds;
+	private Set<Bid> bidList;
+	private Set<UserRole> userRoles;
 	private Membership membership;
 	
 	
@@ -54,7 +56,13 @@ public class User {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+	@Column(nullable=false, unique=true)
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
 	@Column(nullable=false, unique=true)
 	public String getEmail() {
 		return email;
@@ -91,10 +99,10 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany
 	@JoinTable(name="FRIENDS", joinColumns=@JoinColumn(name="personID"), inverseJoinColumns=@JoinColumn(name="friendID"))
-	public List<User> getFriends() {
+	public Set<User> getFriends() {
 		return friends;
 	}
-	public void setFriends(List<User> friends) {
+	public void setFriends(Set<User> friends) {
 		this.friends = friends;
 	}
 	
@@ -102,10 +110,10 @@ public class User {
 	@JsonSerialize(using=CustomUserSerializer.class)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany(mappedBy="friends")
-	public List<User> getFriendOf() {
+	public Set<User> getFriendOf() {
 		return friendOf;
 	}
-	public void setFriendOf(List<User> friendOf) {
+	public void setFriendOf(Set<User> friendOf) {
 		this.friendOf = friendOf;
 	}
 	@JsonInclude(Include.NON_NULL)
@@ -113,31 +121,31 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany
 	@JoinTable(name="FRIEND_REQUESTS", joinColumns=@JoinColumn(name="personID"), inverseJoinColumns=@JoinColumn(name="friendID"))
-	public List<User> getFriendRequests() {
+	public Set<User> getFriendRequests() {
 		return friendRequests;
 	}
-	public void setFriendRequests(List<User> friendRequests) {
+	public void setFriendRequests(Set<User> friendRequests) {
 		this.friendRequests = friendRequests;
 	}
 	@JsonInclude(Include.NON_NULL)
 	@JsonSerialize(using=CustomUserSerializer.class)
 	@ManyToMany(mappedBy="friendRequests")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	public List<User> getFriendRequestsSent() {
+	public Set<User> getFriendRequestsSent() {
 		return friendRequestsSent;
 	}
 	
-	public void setFriendRequestsSent(List<User> friendRequestsSent) {
+	public void setFriendRequestsSent(Set<User> friendRequestsSent) {
 		this.friendRequestsSent = friendRequestsSent;
 	}
 	
 	@JsonInclude(Include.NON_NULL)
 	@JsonBackReference(value="ads_users")
 	@OneToMany(mappedBy="postedBy")
-	public List<FanAd> getUserAds() {
+	public Set<FanAd> getUserAds() {
 		return userAds;
 	}
-	public void setUserAds(List<FanAd> userAds) {
+	public void setUserAds(Set<FanAd> userAds) {
 		this.userAds = userAds;
 	}
 	
@@ -145,20 +153,20 @@ public class User {
 	@JsonInclude(Include.NON_NULL)
 	@OneToMany(mappedBy="fromUser")
 	@Cascade(value=CascadeType.ALL)
-	public List<Bid> getBidList() {
+	public Set<Bid> getBidList() {
 		return bidList;
 	}
-	public void setBidList(List<Bid> bidList) {
+	public void setBidList(Set<Bid> bidList) {
 		this.bidList = bidList;
 	}
-	@OneToOne
+	@ManyToMany(fetch=FetchType.EAGER)
 	@Cascade(value=CascadeType.ALL)
-	@JoinColumn(name="ROLE", nullable=false)
-	public UserRole getUserRole() {
-		return userRole;
+	@JoinTable(name="USERS_ROLES", joinColumns= @JoinColumn(name="USER_ID"), inverseJoinColumns=@JoinColumn(name = "ROLE_ID"))
+	public Set<UserRole> getUserRoles() {
+		return userRoles;
 	}
-	public void setUserRole(UserRole userRole) {
-		this.userRole = userRole;
+	public void setUserRoles(Set<UserRole> userRole) {
+		this.userRoles = userRole;
 	}
 	@OneToOne
 	@Cascade(value=CascadeType.ALL)

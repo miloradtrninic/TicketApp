@@ -4,6 +4,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -34,7 +35,6 @@ import com.msmisa.TicketApp.beans.movie.Genre;
 public abstract class Projection {
 	private Integer id;
 	private String naziv;
-	private Integer price;
 	private List<FanItem> fanItemList;
 	private Integer ratings;
 	private List<Actor> actors;
@@ -43,9 +43,9 @@ public abstract class Projection {
 	private Integer durationMinutes;
 	private String coverPath;
 	private String description;
-	private List<Hall> hallList;
-	private List<Date> projectionTime;
-	private List<Ticket> ticketList;
+
+	private Set<Termin> projectionTime;
+	private Set<Ticket> ticketList;
 	
 	
 	@Id
@@ -62,12 +62,6 @@ public abstract class Projection {
 	}
 	public void setNaziv(String naziv) {
 		this.naziv = naziv;
-	}
-	public Integer getPrice() {
-		return price;
-	}
-	public void setPrice(Integer price) {
-		this.price = price;
 	}
 	@OneToMany(mappedBy="projection")
 	public List<FanItem> getFanItemList() {
@@ -123,28 +117,18 @@ public abstract class Projection {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	@ManyToMany
-	@Cascade(value=CascadeType.ALL)
-	@JoinTable(name="HALLS_PROJECTIONS", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="HALL_ID"))
-	public List<Hall> getHallList() {
-		return hallList;
-	}
-	public void setHallList(List<Hall> hallList) {
-		this.hallList = hallList;
-	}
-	@ElementCollection
-	@CollectionTable(name="PROJECTION_TIME")
-	public List<Date> getProjectionTime() {
+	@OneToMany(mappedBy="projection")
+	public Set<Termin> getProjectionTime() {
 		return projectionTime;
 	}
-	public void setProjectionTime(List<Date> projectionTime) {
+	public void setProjectionTime(Set<Termin> projectionTime) {
 		this.projectionTime = projectionTime;
 	}
 	@OneToMany(mappedBy="projection")
-	public List<Ticket> getTicketList() {
+	public Set<Ticket> getTicketList() {
 		return ticketList;
 	}
-	public void setTicketList(List<Ticket> ticketList) {
+	public void setTicketList(Set<Ticket> ticketList) {
 		this.ticketList = ticketList;
 	}
 	

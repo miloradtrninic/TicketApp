@@ -17,5 +17,8 @@ public class CinemaDaoImpl extends AbstractGenericDao<Cinema, Integer> implement
 	public CinemaDaoImpl(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	} 
+	
+	
+	
 
 }

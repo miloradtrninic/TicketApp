@@ -11,11 +11,9 @@ import com.msmisa.TicketApp.dao.AbstractGenericDao;
 @Transactional
 @Repository
 public class FanZoneDaoImpl extends AbstractGenericDao<FanZone, Integer> implements FanZoneDao {
-
 	@Autowired
 	public FanZoneDaoImpl(SessionFactory sessionFactory) {
 		super(sessionFactory);
 		// TODO Auto-generated constructor stub
 	}
-
 }
