@@ -51,7 +51,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         logger.info("checking authentication for user " + username);
-        logger.info("nece da se updatuje");
         
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
         	logger.info("pokusao da nadje usera " + username);
@@ -66,7 +65,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-
         chain.doFilter(request, response);
     }
 }
