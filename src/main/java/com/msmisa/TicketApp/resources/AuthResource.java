@@ -1,9 +1,6 @@
 package com.msmisa.TicketApp.resources;
 
-import javax.security.auth.login.Configuration;
-
-import org.hibernate.HibernateException;
-import org.hibernate.SessionFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,16 +17,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.User;
-import com.msmisa.TicketApp.dao.GenericDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
-import com.msmisa.TicketApp.dao.user.UserDaoImpl;
+import com.msmisa.TicketApp.dto.DTO;
+import com.msmisa.TicketApp.dto.UserCreationDTO;
 import com.msmisa.TicketApp.security.JwtAuthenticationRequest;
 import com.msmisa.TicketApp.security.JwtAuthenticationResponse;
 import com.msmisa.TicketApp.security.JwtTokenUtil;
@@ -51,7 +48,9 @@ public class AuthResource {
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-
+	
+	@Autowired
+	private UserDao userDao;
 
 	@Value("Authorization")
 	private String tokenHeader;
@@ -72,6 +71,12 @@ public class AuthResource {
 		} catch (BadCredentialsException | UsernameNotFoundException e){
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+	}
+
+	@PostMapping(value="/register")
+	public User passwordCrypt(@DTO(UserCreationDTO.class) User user) {
+		//User toRet = userDao.insert(user);
+		return user;
 	}
 	
 	@RequestMapping(value="/register", 
