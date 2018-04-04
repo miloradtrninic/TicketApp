@@ -1,5 +1,9 @@
 package com.msmisa.TicketApp.resources;
 
+import javax.security.auth.login.Configuration;
+
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,11 +20,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msmisa.TicketApp.beans.User;
+import com.msmisa.TicketApp.dao.GenericDao;
+import com.msmisa.TicketApp.dao.user.UserDao;
+import com.msmisa.TicketApp.dao.user.UserDaoImpl;
 import com.msmisa.TicketApp.security.JwtAuthenticationRequest;
 import com.msmisa.TicketApp.security.JwtAuthenticationResponse;
 import com.msmisa.TicketApp.security.JwtTokenUtil;
@@ -30,6 +39,9 @@ import com.msmisa.TicketApp.security.UsersAuthService;
 @RestController
 @RequestMapping(value="/auth")
 public class AuthResource {
+	
+	@Autowired
+	private UserDao dao;
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -45,9 +57,11 @@ public class AuthResource {
 	private String tokenHeader;
 
 	@RequestMapping(value="/login", 
-			method=RequestMethod.POST)
+			method=RequestMethod.POST,
+			consumes= {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 		try{
+			System.out.println("Pozvan login.");
 			final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 					authenticationRequest.getUsername(),
 					authenticationRequest.getPassword()));
@@ -60,6 +74,17 @@ public class AuthResource {
 		}
 	}
 	
+	@RequestMapping(value="/register", 
+					method=RequestMethod.POST,
+					consumes= {"application/json"})
+	public ResponseEntity<?> registerUser(@RequestBody User user) {
+		try {
+			System.out.println("Pozvan register.");
+			return ResponseEntity.ok(dao.insert(user));
+		} catch(HibernateException e) {
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+		}
+	}
 	
 	@RequestMapping(value="/password", 
 			consumes=MediaType.TEXT_PLAIN_VALUE,
