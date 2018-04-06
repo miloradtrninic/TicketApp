@@ -46,13 +46,13 @@ import com.msmisa.TicketApp.security.UsersAuthService;
 @RestController
 @RequestMapping(value="/auth")
 public class AuthResource {
-	
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private MembershipDao membershipDao;
-	
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -61,17 +61,17 @@ public class AuthResource {
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-	
+
 	@Autowired
 	private UserRoleDao roleDao;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@Value("Authorization")
 	private String tokenHeader;
 
-	@RequestMapping(value="/login", 
+	@RequestMapping(value="/login",
 			method=RequestMethod.POST,
 			consumes= {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
@@ -81,7 +81,7 @@ public class AuthResource {
 					authenticationRequest.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			final UserDetails userDetails = myAppUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-			final String token = jwtTokenUtil.generateToken(userDetails);			
+			final String token = jwtTokenUtil.generateToken(userDetails);
 			return ResponseEntity.ok(new JwtAuthenticationResponse(token,(UserDetailsCustom)userDetails));
 		} catch (BadCredentialsException | UsernameNotFoundException e){
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -93,9 +93,9 @@ public class AuthResource {
 				produces = {"application/json"})
 	public User register(@DTO(UserCreationDTO.class) User user) {
 		User toRet = null;
-		UserRole role = null;					
+		UserRole role = null;
 		User userExists = userDao.getByUserName(user.getUsername());
-		
+
 		if(userExists == null) {
 			role = roleDao.get(1);							//Recimo da je 1 obican user
 			user.setMembership(membershipDao.get(1));		//Recimo da 1 obicno clanstvo

@@ -2,16 +2,14 @@ package com.msmisa.TicketApp.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UserCreationDTO {
 	private String username;
 	private String email;
 	private String password;
 	private String name, lastname;
 	private String phoneNo;
-	
-	
+
+
 	public String getUsername() {
 		return username;
 	}
@@ -48,6 +46,6 @@ public class UserCreationDTO {
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
 	}
-	
-	
+
+
 }
