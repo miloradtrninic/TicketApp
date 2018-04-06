@@ -2,6 +2,8 @@ package com.msmisa.TicketApp.dto;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserCreationDTO {
 	private String username;
 	private String email;

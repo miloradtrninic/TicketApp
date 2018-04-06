@@ -47,6 +47,4 @@ public class Privilege {
 	public void setUserRoles(Set<UserRole> userRoles) {
 		this.userRoles = userRoles;
 	}
- 
-	
 }

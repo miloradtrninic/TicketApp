@@ -1,5 +1,10 @@
 package com.msmisa.TicketApp.resources;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.hibernate.HibernateException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +28,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msmisa.TicketApp.beans.Bid;
+import com.msmisa.TicketApp.beans.FanAd;
 import com.msmisa.TicketApp.beans.User;
+import com.msmisa.TicketApp.beans.UserRole;
+import com.msmisa.TicketApp.dao.user.MembershipDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
+import com.msmisa.TicketApp.dao.user.UserRoleDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.UserCreationDTO;
 import com.msmisa.TicketApp.security.JwtAuthenticationRequest;
@@ -38,7 +48,10 @@ import com.msmisa.TicketApp.security.UsersAuthService;
 public class AuthResource {
 	
 	@Autowired
-	private UserDao dao;
+	private UserDao userDao;
+	
+	@Autowired
+	private MembershipDao membershipDao;
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -50,7 +63,10 @@ public class AuthResource {
 	private JwtTokenUtil jwtTokenUtil;
 	
 	@Autowired
-	private UserDao userDao;
+	private UserRoleDao roleDao;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@Value("Authorization")
 	private String tokenHeader;
@@ -60,7 +76,6 @@ public class AuthResource {
 			consumes= {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 		try{
-			System.out.println("Pozvan login.");
 			final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 					authenticationRequest.getUsername(),
 					authenticationRequest.getPassword()));
@@ -73,31 +88,27 @@ public class AuthResource {
 		}
 	}
 
-	@PostMapping(value="/register")
-	public User passwordCrypt(@DTO(UserCreationDTO.class) User user) {
-		//User toRet = userDao.insert(user);
-		return user;
-	}
-	
-	@RequestMapping(value="/register", 
-					method=RequestMethod.POST,
-					consumes= {"application/json"})
-	public ResponseEntity<?> registerUser(@RequestBody User user) {
-		try {
-			System.out.println("Pozvan register.");
-			return ResponseEntity.ok(dao.insert(user));
-		} catch(HibernateException e) {
-			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+	@PostMapping(value="/register",
+				consumes = {"application/json","application/json;charset=UTF-8"},
+				produces = {"application/json"})
+	public User register(@DTO(UserCreationDTO.class) User user) {
+		User toRet = null;
+		UserRole role = null;					
+		User userExists = userDao.getByUserName(user.getUsername());
+		
+		if(userExists == null) {
+			role = roleDao.get(1);							//Recimo da je 1 obican user
+			user.setMembership(membershipDao.get(1));		//Recimo da 1 obicno clanstvo
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+			user.setUserRoles(new HashSet<UserRole>(Arrays.asList(role)));
+			user.setBidList(new HashSet<Bid>());
+			user.setFriendOf(new HashSet<User>());
+			user.setFriendRequests(new HashSet<User>());
+			user.setFriendRequestsSent(new HashSet<User>());
+			user.setFriends(new HashSet<User>());
+			user.setUserAds(new HashSet<FanAd>());
 		}
+
+		return toRet;
 	}
-	
-	@RequestMapping(value="/password", 
-			consumes=MediaType.TEXT_PLAIN_VALUE,
-			method=RequestMethod.POST)
-	public String passwordCrypt(@RequestBody String pass) {
-		System.out.println("odabran pass " + pass);
-		PasswordEncoder bcrypt = new BCryptPasswordEncoder();
-		return bcrypt.encode(pass);
-	}
-	
 }
