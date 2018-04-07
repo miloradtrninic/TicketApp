@@ -46,14 +46,38 @@ public class UsersAuthService implements UserDetailsService {
 						})
 						.collect(Collectors.toList()));
 			}
-			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(),roleAuths);
+			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(), user.isEnabled(), roleAuths);
 			return userDetails;
 		}catch(DaoException e) {
 			throw new UsernameNotFoundException("Username not found. Error with database.");
 		}
 	}
-
 	
-	
+	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+		// TODO Auto-generated method stub
+		try {
+			User user = userDao.getByEmail(email);
+			if(user==null)
+				throw new UsernameNotFoundException("E-mail not found.");
+			
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+			Set<UserRole> roles = user.getUserRoles();
+			List<SimpleGrantedAuthority> roleAuths = new ArrayList<>();
+			for(UserRole role:roles) {
+				roleAuths.addAll(
+						role.getPrivileges().stream()
+						.map(priv -> {
+							
+							SimpleGrantedAuthority grantedAuth = new SimpleGrantedAuthority(priv.getName());
+							return grantedAuth;
+						})
+						.collect(Collectors.toList()));
+			}
+			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(), user.isEnabled(), roleAuths);
+			return userDetails;
+		}catch(DaoException e) {
+			throw new UsernameNotFoundException("Username not found. Error with database.");
+		}
+	}
 
 }

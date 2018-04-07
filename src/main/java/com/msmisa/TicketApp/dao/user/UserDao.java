@@ -8,4 +8,5 @@ public interface UserDao extends GenericDao<User, Integer> {
 
 	User getByUserName(String username) throws DaoException;
 
+	User getByEmail(String email) throws DaoException;
 }

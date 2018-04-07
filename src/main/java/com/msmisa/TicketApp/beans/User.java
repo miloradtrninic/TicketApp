@@ -37,6 +37,7 @@ public class User {
 	private String password;
 	private String name, lastname;
 	private String phoneNo;
+	private boolean enabled;
 	private Set<User> friends;
 	private Set<User> friendOf;
 	private Set<User> friendRequests;
@@ -67,6 +68,10 @@ public class User {
 	public String getEmail() {
 		return email;
 	}
+	@Column(nullable=false)
+	public boolean isEnabled() {
+		return enabled;
+	}
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -93,6 +98,9 @@ public class User {
 	}
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
+	}
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	@JsonInclude(Include.NON_NULL)
 	@JsonSerialize(using=CustomUserSerializer.class)

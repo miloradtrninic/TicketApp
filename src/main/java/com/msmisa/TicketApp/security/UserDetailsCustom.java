@@ -14,15 +14,16 @@ public class UserDetailsCustom implements org.springframework.security.core.user
 
 	@JsonIgnore
 	private String password;
-	
+	private boolean isEnabled;
 	private String username;
 	private List<SimpleGrantedAuthority> grantedAuthorities;
 	
-	public UserDetailsCustom(String username, String password, List<SimpleGrantedAuthority> grantedAuthorities) {
+	public UserDetailsCustom(String username, String password, boolean isEnabled, List<SimpleGrantedAuthority> grantedAuthorities) {
 		super();
 		this.password = password;
 		this.username = username;
 		this.grantedAuthorities = grantedAuthorities;
+		this.isEnabled = isEnabled;
 	}
 	
 	@Override
@@ -63,8 +64,11 @@ public class UserDetailsCustom implements org.springframework.security.core.user
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 
 }

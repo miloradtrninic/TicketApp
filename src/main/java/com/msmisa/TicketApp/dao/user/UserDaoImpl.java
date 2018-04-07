@@ -40,6 +40,20 @@ public class UserDaoImpl extends AbstractGenericDao<User, Integer> implements Us
 		}
 	}
 
-
-
+	@Override
+	public User getByEmail(String email) throws DaoException {
+		// TODO Auto-generated method stub
+		SessionFactory sf = getSessionFactory();
+		try{
+			List<User> users = sf.getCurrentSession()
+				.createCriteria(User.class)
+				.add(Restrictions.eq("email", email))
+				.list();
+			if(users.isEmpty())
+				return null;
+			return users.get(0);
+		} catch(HibernateException e){
+			throw new DaoException(e.getMessage());
+		}
+	}
 }
