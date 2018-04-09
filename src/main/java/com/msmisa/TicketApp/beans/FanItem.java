@@ -40,7 +40,7 @@ public class FanItem {
 	}
 	@JsonBackReference(value="zone_item")
 	@ManyToOne
-	@JoinColumn(name="FANZONE_ID", nullable=false)
+	@JoinColumn(name="FANZONE_ID", nullable=true)
 	public FanZone getFanzone() {
 		return fanzone;
 	}

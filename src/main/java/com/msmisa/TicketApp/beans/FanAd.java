@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -71,7 +72,7 @@ public class FanAd {
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
-	@JsonManagedReference(value="ads_users")
+	@JsonBackReference(value="ads_users")
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
 	public User getPostedBy() {

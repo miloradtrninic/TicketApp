@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -33,8 +34,8 @@ public abstract class Auditorium {
 	private String description;
 	private Integer ratings;
 	private FanZone fanZone;
+	
 	private List<Hall> hallList;
-	private List<Membership> membershipList;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -70,14 +71,15 @@ public abstract class Auditorium {
 		this.ratings = ratings;
 	}
 	@OneToOne
-	@JoinColumn(name="FANZONE_ID", nullable=false)
+	@JoinColumn(name="FANZONE_ID", nullable=true)
 	public FanZone getFanZone() {
 		return fanZone;
 	}
 	public void setFanZone(FanZone fanZone) {
 		this.fanZone = fanZone;
 	}
-	@JsonManagedReference(value="aud_hall")
+	
+	@JsonIgnore
 	@OneToMany(mappedBy="auditorium")
 	@Cascade(value=CascadeType.ALL)
 	public List<Hall> getHallList() {
@@ -85,14 +87,6 @@ public abstract class Auditorium {
 	}
 	public void setHallList(List<Hall> hallList) {
 		this.hallList = hallList;
-	}
-	@ManyToMany
-	@JoinTable(name="AUDITORIUM_MEMBERSHIP", joinColumns=@JoinColumn(name="AUDITORIUM_ID"), inverseJoinColumns=@JoinColumn(name="MEMBERSHIP_ID"))
-	public List<Membership> getMembershipList() {
-		return membershipList;
-	}
-	public void setMembershipList(List<Membership> membershipList) {
-		this.membershipList = membershipList;
 	}
 	
 	

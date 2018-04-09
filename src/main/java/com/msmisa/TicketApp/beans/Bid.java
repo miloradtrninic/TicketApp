@@ -31,7 +31,7 @@ public class Bid {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@JsonManagedReference(value="bids_user")
+	@JsonBackReference(value="bids_user")
 	@ManyToOne
 	@JoinColumn(name="FROM_USER", nullable=false)
 	public User getFromUser() {

@@ -15,6 +15,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -42,7 +43,7 @@ public class Hall {
 	public void setName(String name) {
 		this.name = name;
 	}
-	@JsonBackReference(value="aud_hall")
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="AUDITORIUM_ID", nullable=false)
 	public Auditorium getAuditorium() {

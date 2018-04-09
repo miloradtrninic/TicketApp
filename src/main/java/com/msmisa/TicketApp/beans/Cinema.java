@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @SecondaryTable(name="CINEMAS")
@@ -21,7 +23,7 @@ public class Cinema extends Auditorium {
 	private List<Movie> moviesRepertory;
 	
 	@ManyToMany(mappedBy="cinemaList")
-	@Cascade(value=CascadeType.ALL)
+	@JsonIgnore
 	public List<Movie> getMoviesRepertory() {
 		return moviesRepertory;
 	}

@@ -1,7 +1,5 @@
 package com.msmisa.TicketApp.dto;
 
-import javax.validation.constraints.NotNull;
-
 public class UserCreationDTO {
 	private String username;
 	private String email;

@@ -24,6 +24,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.msmisa.TicketApp.json.CustomUserSerializer;
 
@@ -148,7 +149,7 @@ public class User {
 	}
 	
 	@JsonInclude(Include.NON_NULL)
-	@JsonBackReference(value="ads_users")
+	@JsonManagedReference(value="ads_users")
 	@OneToMany(mappedBy="postedBy")
 	public Set<FanAd> getUserAds() {
 		return userAds;
@@ -157,7 +158,7 @@ public class User {
 		this.userAds = userAds;
 	}
 	
-	@JsonBackReference(value="bids_user")
+	@JsonManagedReference(value="bids_user")
 	@JsonInclude(Include.NON_NULL)
 	@OneToMany(mappedBy="fromUser")
 	@Cascade(value=CascadeType.ALL)

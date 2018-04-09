@@ -21,9 +21,8 @@ public abstract class AbstractController<Entity,Key> {
 
 	@RequestMapping(method=RequestMethod.GET,
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Entity>> getAll(@RequestParam(value="start", required=true) int start,
-			@RequestParam(value="results", required=true) int results){
-		List<Entity> list = dao.getAll(start,results);
+	public ResponseEntity<List<Entity>> getAll(){
+		List<Entity> list = dao.getAll();
 
 		if(list.isEmpty())
 			return new ResponseEntity<List<Entity>>(list,HttpStatus.NO_CONTENT);
