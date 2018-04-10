@@ -15,6 +15,6 @@ public interface GenericDao<Entity,Key>  {
 	
 	Entity update(Entity entity) throws DaoException;
 	
-	void delete(Entity entity) throws DaoException;
+	void delete(Key entity) throws DaoException;
 
 }

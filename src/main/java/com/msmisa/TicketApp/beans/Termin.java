@@ -1,7 +1,7 @@
 package com.msmisa.TicketApp.beans;
 
 import java.sql.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +25,7 @@ public class Termin {
 	private Integer id;
 	
 	private Projection projection;
-	private Set<Hall> hallList;
+	private List<Hall> hallList;
 	private Date time;
 	private Integer price;
 	
@@ -49,10 +49,10 @@ public class Termin {
 	@ManyToMany
 	@Cascade(value=CascadeType.ALL)
 	@JoinTable(name="HALLS_TERMIN", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="HALL_ID"))
-	public Set<Hall> getHallList() {
+	public List<Hall> getHallList() {
 		return hallList;
 	}
-	public void setHallList(Set<Hall> hallList) {
+	public void setHallList(List<Hall> hallList) {
 		this.hallList = hallList;
 	}
 	public Date getTime() {

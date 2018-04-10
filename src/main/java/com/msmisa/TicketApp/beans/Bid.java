@@ -8,8 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 
@@ -21,7 +19,7 @@ public class Bid {
 	private User fromUser;
 	private String offer;
 	private FanAd fanAd;
-	
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "ID", unique = true, nullable = false)

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class FanZone {
 	private Integer id;
 	private User admin;
+	private Auditorium auditorium;
 	private List<FanItem> fanitemList;
 	
 	@Id
@@ -53,6 +54,14 @@ public class FanZone {
 	}
 	public void setFanitemList(List<FanItem> fanitemList) {
 		this.fanitemList = fanitemList;
+	}
+	
+	@OneToOne(mappedBy="fanZone")
+	public Auditorium getAuditorium() {
+		return auditorium;
+	}
+	public void setAuditorium(Auditorium auditorium) {
+		this.auditorium = auditorium;
 	}
 	
 	

@@ -102,10 +102,11 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 
 	@Override
 	//@PreAuthorize("hasAuthority(#this.this.className+'_DELETE')")
-	public void delete(Entity entity) throws DaoException {
+	public void delete(Key key) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
 			Session session = sessionFactory.getCurrentSession();
+			Entity entity = get(key);
 			session.delete(session.contains(entity) ? entity : session.merge(entity));
 			//sessionFactory.getCurrentSession().delete(entity);
 		} catch(HibernateException e){

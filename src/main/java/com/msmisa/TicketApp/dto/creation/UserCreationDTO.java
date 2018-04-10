@@ -1,4 +1,4 @@
-package com.msmisa.TicketApp.dto;
+package com.msmisa.TicketApp.dto.creation;
 
 public class UserCreationDTO {
 	private String username;

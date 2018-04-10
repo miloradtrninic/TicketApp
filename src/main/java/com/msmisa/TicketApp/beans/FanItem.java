@@ -16,6 +16,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name="FANITEMS")
 public class FanItem {
 	private Integer id;
+	private String name;
+	private String imagePath;
+	private String description;
 	private Projection projection;
 	private FanZone fanzone;
 	
@@ -47,6 +50,30 @@ public class FanItem {
 
 	public void setFanzone(FanZone fanzone) {
 		this.fanzone = fanzone;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	

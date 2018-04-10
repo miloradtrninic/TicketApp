@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -20,15 +18,13 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Inheritance( strategy = InheritanceType.SINGLE_TABLE )
 @DiscriminatorColumn(name = "entityType",discriminatorType = DiscriminatorType.STRING)
 public abstract class Auditorium {
-	private Integer ID;
+	private Integer id;
 	private String name;
 	private String address;
 	private String description;
@@ -41,10 +37,10 @@ public abstract class Auditorium {
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "ID", unique = true, nullable = false)
 	public Integer getID() {
-		return ID;
+		return id;
 	}
 	public void setID(Integer iD) {
-		ID = iD;
+		id = iD;
 	}
 	public String getName() {
 		return name;
