@@ -16,7 +16,7 @@ public class ProjectionCreationDTO {
 	@ForeignKeyDTO(clazzFK=Genre.class)
 	private List<Integer> genreIds;
 	@ForeignKeyDTO(clazzFK=Director.class)
-	private Integer director;
+	private String director;
 	private Integer durationMinutes;
 	private String coverPath;
 	private String description;
@@ -45,10 +45,23 @@ public class ProjectionCreationDTO {
 	public void setGenres(List<Integer> genres) {
 		this.genreIds = genres;
 	}
-	public Integer getDirector() {
+	
+	public List<Integer> getActorIds() {
+		return actorIds;
+	}
+	public void setActorIds(List<Integer> actorIds) {
+		this.actorIds = actorIds;
+	}
+	public List<Integer> getGenreIds() {
+		return genreIds;
+	}
+	public void setGenreIds(List<Integer> genreIds) {
+		this.genreIds = genreIds;
+	}
+	public String getDirector() {
 		return director;
 	}
-	public void setDirector(Integer director) {
+	public void setDirector(String director) {
 		this.director = director;
 	}
 	public Integer getDurationMinutes() {

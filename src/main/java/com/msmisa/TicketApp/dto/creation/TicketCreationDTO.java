@@ -9,7 +9,6 @@ import com.msmisa.TicketApp.dto.ForeignKeyDTO;
 public class TicketCreationDTO {
 	@ForeignKeyDTO(clazzFK=Projection.class)
 	private Integer projectionId;
-	private Integer id;
 	private Date time;
 	@ForeignKeyDTO(clazzFK=Seating.class)
 	private Integer seatingId;
@@ -22,12 +21,6 @@ public class TicketCreationDTO {
 	}
 	public void setProjectionId(Integer projectionId) {
 		this.projectionId = projectionId;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
 	}
 	public Date getTime() {
 		return time;
