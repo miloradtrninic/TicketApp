@@ -1,6 +1,4 @@
-package com.msmisa.TicketApp.dto;
-
-import javax.validation.constraints.NotNull;
+package com.msmisa.TicketApp.dto.creation;
 
 public class UserCreationDTO {
 	private String username;

@@ -1,13 +1,7 @@
 package com.msmisa.TicketApp.resources;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
-import org.hibernate.HibernateException;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,14 +19,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
@@ -44,13 +34,12 @@ import com.msmisa.TicketApp.dao.user.MembershipDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
 import com.msmisa.TicketApp.dao.user.UserRoleDao;
 import com.msmisa.TicketApp.dto.DTO;
-import com.msmisa.TicketApp.dto.UserCreationDTO;
+import com.msmisa.TicketApp.dto.creation.UserCreationDTO;
 import com.msmisa.TicketApp.events.OnRegistrationCompleteEvent;
 import com.msmisa.TicketApp.security.JwtAuthenticationRequest;
 import com.msmisa.TicketApp.security.JwtAuthenticationResponse;
 import com.msmisa.TicketApp.security.JwtTokenUtil;
 import com.msmisa.TicketApp.security.UserDetailsCustom;
-import com.msmisa.TicketApp.security.UsersAuthService;
 
 @RestController
 @RequestMapping(value="/auth")

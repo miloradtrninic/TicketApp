@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.msmisa.TicketApp.beans.Projection;
 
 
@@ -45,6 +45,7 @@ public class Director {
 		this.lastName = lastName;
 	}
 	@OneToMany(mappedBy="director")
+	@JsonIgnore
 	public List<Projection> getProjectionList() {
 		return projectionList;
 	}

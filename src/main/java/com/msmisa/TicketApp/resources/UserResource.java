@@ -11,7 +11,7 @@ import com.msmisa.TicketApp.dao.user.UserDao;
 @RestController
 @RequestMapping(value="/user")
 public class UserResource extends AbstractController<User, Integer> {
-	
+
 	@Autowired
 	private UserDao userDao;
 	

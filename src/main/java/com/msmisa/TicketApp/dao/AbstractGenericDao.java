@@ -39,7 +39,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@PreAuthorize("hasAuthority(#this.this.className+'_READ_ALL')")
+	//@PreAuthorize("hasAuthority(#this.this.className+'_READ_ALL')")
 	public List<Entity> getAll() throws DaoException {
 		try{
 			return sessionFactory.getCurrentSession()
@@ -52,7 +52,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@PreAuthorize("hasAuthority(#this.this.className+'_READ')")
+	//@PreAuthorize("hasAuthority(#this.this.className+'_READ')")
 	public List<Entity> getAll(int firstResult, int maxResults) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -67,7 +67,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority(#this.this.className+'_GET_ID')")
+	//@PreAuthorize("hasAuthority(#this.this.className+'_GET_ID')")
 	public Entity get(Key id) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -79,7 +79,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority(#this.this.className+'_ADD')")
+	//@PreAuthorize("hasAuthority(#this.this.className+'_ADD')")
 	public Entity insert(Entity entity) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -90,7 +90,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority(#this.this.className+'_UPDATE')")
+	//@PreAuthorize("hasAuthority(#this.this.className+'_UPDATE')")
 	public Entity update(Entity entity) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
@@ -101,11 +101,12 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority(#this.this.className+'_DELETE')")
-	public void delete(Entity entity) throws DaoException {
+	//@PreAuthorize("hasAuthority(#this.this.className+'_DELETE')")
+	public void delete(Key key) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
 			Session session = sessionFactory.getCurrentSession();
+			Entity entity = get(key);
 			session.delete(session.contains(entity) ? entity : session.merge(entity));
 			//sessionFactory.getCurrentSession().delete(entity);
 		} catch(HibernateException e){
