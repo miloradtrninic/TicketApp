@@ -46,7 +46,7 @@ public class UsersAuthService implements UserDetailsService {
 						})
 						.collect(Collectors.toList()));
 			}
-			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(), user.isEnabled(), roleAuths);
+			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(), roleAuths);
 			return userDetails;
 		}catch(DaoException e) {
 			throw new UsernameNotFoundException("Username not found. Error with database.");
@@ -73,7 +73,7 @@ public class UsersAuthService implements UserDetailsService {
 						})
 						.collect(Collectors.toList()));
 			}
-			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(), user.isEnabled(), roleAuths);
+			UserDetails userDetails = new UserDetailsCustom(user.getUsername(), user.getPassword(),roleAuths);
 			return userDetails;
 		}catch(DaoException e) {
 			throw new UsernameNotFoundException("Username not found. Error with database.");

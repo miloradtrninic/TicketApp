@@ -91,13 +91,23 @@ public class AuthResource {
 			consumes= {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 		try{
-			final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					authenticationRequest.getUsername(),
-					authenticationRequest.getPassword()));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			final UserDetails userDetails = myAppUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-			final String token = jwtTokenUtil.generateToken(userDetails);
-			return ResponseEntity.ok(new JwtAuthenticationResponse(token,(UserDetailsCustom)userDetails));
+			User user = userDao.getByUserName(authenticationRequest.getUsername());
+			
+			if(user != null) {
+				if(user.isEnabled()) {
+					final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+							authenticationRequest.getUsername(),
+							authenticationRequest.getPassword()));
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+					final UserDetails userDetails = myAppUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+					final String token = jwtTokenUtil.generateToken(userDetails);
+					return ResponseEntity.ok(new JwtAuthenticationResponse(token,(UserDetailsCustom)userDetails));
+				} else {
+					return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Account not enabled");
+				}
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+			}
 		} catch (BadCredentialsException | UsernameNotFoundException e){
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
@@ -133,34 +143,28 @@ public class AuthResource {
 			}
 		}
 		
-		
 		return toRet;
 	}
 	
-	/*@GetMapping(value="/registrationConfirm")
+	@GetMapping(value="/registrationConfirm")
 	public String confirmRegistration(WebRequest request, Model model, @RequestParam("token") String token) {
 		String ret = null;
 		Locale locale = request.getLocale();
-		boolean isTokenValid = jwtTokenUtil.validateToken(token, userDetails)		//???????????????????
+		String username = jwtTokenUtil.getUsernameFromToken(token);
+		boolean isTokenValid = !jwtTokenUtil.validateToken(token, new UserDetailsCustom(username, null, null));
 		
 		if(!isTokenValid) {
 			String msg = messages.getMessage("auth.message.invalidToken", null, locale);
-			model.addAtribute("message", msg);
+			model.addAttribute("message", msg);
 			ret = "redirect:/badUser.html?lang=" + locale.getLanguage();
 		} else {
-			User user = verificationToken.getUser();
+			User user = userDao.getByUserName(username);
 		    Calendar cal = Calendar.getInstance();
-		    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-		        String messageValue = messages.getMessage("auth.message.expired", null, locale);
-		        model.addAttribute("message", messageValue);
-		        ret = "redirect:/badUser.html?lang=" + locale.getLanguage();
-		    } 
-		     
 		    user.setEnabled(true); 
-		    service.saveRegisteredUser(user); 
+		    userDao.update(user);
 		    ret = "redirect:/login.html?lang=" + request.getLocale().getLanguage();
 		}
 		
 		return ret;
-	}*/
+	}
 }
