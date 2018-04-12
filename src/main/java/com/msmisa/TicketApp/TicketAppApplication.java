@@ -1,23 +1,14 @@
 package com.msmisa.TicketApp;
-
-
-import java.util.ArrayList;
 import java.util.stream.Collectors;
-
 import javax.persistence.EntityManagerFactory;
-
 import org.hibernate.SessionFactory;
-import org.hibernate.collection.spi.PersistentCollection;
-import org.modelmapper.Condition;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
 import com.msmisa.TicketApp.beans.Termin;
 import com.msmisa.TicketApp.dto.preview.TerminPreviewDTO;
 
