@@ -1,7 +1,14 @@
 package com.msmisa.TicketApp.resources;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+import org.hibernate.HibernateException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,6 +16,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,10 +27,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
@@ -40,6 +53,10 @@ import com.msmisa.TicketApp.security.JwtAuthenticationRequest;
 import com.msmisa.TicketApp.security.JwtAuthenticationResponse;
 import com.msmisa.TicketApp.security.JwtTokenUtil;
 import com.msmisa.TicketApp.security.UserDetailsCustom;
+import com.msmisa.TicketApp.security.UsersAuthService;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 
 @RestController
 @RequestMapping(value="/auth")
@@ -74,15 +91,25 @@ public class AuthResource {
 	
 	@Value("Authorization")
 	private String tokenHeader;
+	
+	@Value("mySecret")
+	private String secret;
 
 	@RequestMapping(value="/login",
 			method=RequestMethod.POST,
-			consumes= {MediaType.APPLICATION_JSON_UTF8_VALUE})
+			consumes= {"application/json", "application/json;charset=UTF-8"},
+			produces= {"application/json"})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 		try{
-			User user = userDao.getByUserName(authenticationRequest.getUsername());
+			User userName = userDao.getByUserName(authenticationRequest.getUsername());
+			User userMail = userDao.getByEmail(authenticationRequest.getUsername());
+			User user = null;
 			
-			if(user != null) {
+			if(userName != null || userMail != null) {
+				if(userName == null)
+					user = userMail;
+				else
+					user = userName;
 				if(user.isEnabled()) {
 					final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 							authenticationRequest.getUsername(),
@@ -92,7 +119,7 @@ public class AuthResource {
 					final String token = jwtTokenUtil.generateToken(userDetails);
 					return ResponseEntity.ok(new JwtAuthenticationResponse(token,(UserDetailsCustom)userDetails));
 				} else {
-					return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Account not enabled");
+					return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(messages.getMessage("auth.msg.accLocked", null, new Locale("en)")));
 				}
 			} else {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -102,17 +129,20 @@ public class AuthResource {
 		}
 	}
 
+	@Secured("ROLE_ANONYMOUS")
 	@PostMapping(value="/register",
 				consumes = {"application/json","application/json;charset=UTF-8"},
 				produces = {"application/json"})
-	public User register(@DTO(UserCreationDTO.class) User user, WebRequest request) {
+	public ResponseEntity<?> register(@DTO(UserCreationDTO.class) User user, WebRequest request) {
+		ResponseEntity<?> ret = null;
 		User toRet = null;
 		UserRole role = null;
-		User userExists = userDao.getByUserName(user.getUsername());
+		User userName = userDao.getByUserName(user.getUsername());
+		User userEmail = userDao.getByEmail(user.getEmail());
 
-		if(userExists == null) {
-			role = roleDao.get(1);							//Recimo da je 1 obican user
-			user.setMembership(membershipDao.get(1));		//Recimo da 1 obicno clanstvo
+		if(userName == null && userEmail == null && validateUserInfo(user)) {
+			role = roleDao.get(3);							//Recimo da je 1 obican user (registered)
+			user.setMembership(membershipDao.get(1));		//Recimo da 1 obicno clanstvo (bronza)
 			user.setEnabled(false);
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			user.setUserRoles(new HashSet<UserRole>(Arrays.asList(role)));
@@ -124,36 +154,64 @@ public class AuthResource {
 			user.setUserAds(new HashSet<FanAd>());
 			
 			try {
+				System.out.println("Treba mail poslati!");
 				String appUrl = request.getContextPath();
 				eventPublisher.publishEvent(new OnRegistrationCompleteEvent(appUrl, request.getLocale(), user));
 				toRet = userDao.insert(user);
+				ret = ResponseEntity.ok(toRet);
 			} catch(Exception e) {
-				System.out.println("Greska pri slanju registracionog e-maila.");
+				System.out.println("Greska pri registraciji!");
+				e.printStackTrace();
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering you. Please, try again.");
 			}
-		}
-		
-		return toRet;
-	}
-	
-	@GetMapping(value="/registrationConfirm")
-	public String confirmRegistration(WebRequest request, Model model, @RequestParam("token") String token) {
-		String ret = null;
-		Locale locale = request.getLocale();
-		String username = jwtTokenUtil.getUsernameFromToken(token);
-		boolean isTokenValid = !jwtTokenUtil.validateToken(token, new UserDetailsCustom(username, null, null));
-		
-		if(!isTokenValid) {
-			String msg = messages.getMessage("auth.message.invalidToken", null, locale);
-			model.addAttribute("message", msg);
-			ret = "redirect:/badUser.html?lang=" + locale.getLanguage();
 		} else {
-			User user = userDao.getByUserName(username);
-		    Calendar cal = Calendar.getInstance();
-		    user.setEnabled(true); 
-		    userDao.update(user);
-		    ret = "redirect:/login.html?lang=" + request.getLocale().getLanguage();
+			String msg = null;
+			if(userName != null)
+				msg = "Username is already taken. Try again with another username.";
+			else if(userEmail != null) 
+				msg = "User with this e-mail already exists.";
+			ret = ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(msg);
 		}
 		
 		return ret;
+	}
+	
+	@GetMapping(value="/registrationConfirm")
+	public ResponseEntity<?> confirmRegistration(WebRequest request, @RequestParam("token") String token) {
+		System.out.println(token);
+		ResponseEntity<?> ret = null;
+		Locale locale = request.getLocale();
+		String username = jwtTokenUtil.getUsernameFromToken(token);
+		
+		Date exp = jwtTokenUtil.getExpirationDateFromToken(token);
+		System.out.println("Username: " + username);
+		
+		Date now = new Date();
+		System.out.println("Exp: " + exp.toString());
+		System.out.println("Now" + now.toString());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(now);
+		cal.add(Calendar.DATE, 1);
+		now = cal.getTime();
+		
+		boolean isTokenValid = now.after(exp);
+		
+		if(!isTokenValid) {
+			String msg = messages.getMessage("auth.msg.invalidToken", null, new Locale("en"));
+			ret = ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(msg);
+		} else {
+			User user = userDao.getByUserName(username);
+		    user.setEnabled(true); 
+		    userDao.update(user);
+		    ret = ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).body("redirect:localhost:4200/#/login");
+		}
+		
+		return ret;
+	}
+	
+	private boolean validateUserInfo(User user) {
+		return user.getUsername().length() > 2 && user.getPassword().length() > 8 
+				&& user.getPhoneNo().length() >=9 && user.getPhoneNo().length() <= 10
+				&& user.getLastname() != null && user.getName() != null && user.getEmail().indexOf('@') != -1;
 	}
 }
