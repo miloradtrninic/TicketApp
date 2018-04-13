@@ -29,8 +29,7 @@ public abstract class AbstractController<Entity, Key> {
 
 
 	@RequestMapping(value="/delete/{id}",
-			method=RequestMethod.DELETE,
-			consumes=MediaType.APPLICATION_JSON_VALUE)
+			method=RequestMethod.DELETE)
 	public void delete(@PathVariable(value="id") Key id){
 		dao.delete(id);
 	}
