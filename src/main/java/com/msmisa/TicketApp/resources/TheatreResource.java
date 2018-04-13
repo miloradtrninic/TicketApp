@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.msmisa.TicketApp.beans.Theatre;
 import com.msmisa.TicketApp.dto.DTO;
+//import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
 
 @RestController
 @RequestMapping(value="/theatre")
 public class TheatreResource extends AbstractController<Theatre, Integer> {
-
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TheatrePreviewDTO>> getAll(){
 		List<Theatre> list = getDao().getAll();
@@ -44,5 +44,4 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 	public TheatrePreviewDTO getId (@PathVariable(value="id") Integer id) {
 		return convertToDto(getDao().get(id), TheatrePreviewDTO.class);
 	}
-	
 }

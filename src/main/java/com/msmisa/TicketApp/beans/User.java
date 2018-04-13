@@ -38,6 +38,7 @@ public class User {
 	private String password;
 	private String name, lastname;
 	private String phoneNo;
+	private String city;
 	private boolean enabled;
 	private Set<User> friends;
 	private Set<User> friendOf;
@@ -186,7 +187,11 @@ public class User {
 	public void setMembership(Membership membership) {
 		this.membership = membership;
 	}
-	
-	
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
 	
 }

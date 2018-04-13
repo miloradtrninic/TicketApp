@@ -4,12 +4,11 @@ public class UserPreviewDTO {
 	private Integer id;
 	private String username;
 	private String email;
-	private String password;
 	private String name, lastname;
 	private String phoneNo;
 	private boolean enabled;
 	private String membershipName;
-	
+	private String city;
 	
 	public Integer getId() {
 		return id;
@@ -28,12 +27,6 @@ public class UserPreviewDTO {
 	}
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public String getName() {
 		return name;
@@ -64,6 +57,12 @@ public class UserPreviewDTO {
 	}
 	public void setMembershipName(String membershipName) {
 		this.membershipName = membershipName;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
 	}
 	
 	
