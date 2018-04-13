@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.msmisa.TicketApp.beans.Play;
 import com.msmisa.TicketApp.dto.DTO;
+import com.msmisa.TicketApp.dto.creation.PlayCreationDTO;
 import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
 
 @RestController
@@ -34,7 +35,7 @@ public class PlayResource extends AbstractController<Play, Integer>{
 	@PostMapping(value="/new",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public PlayPreviewDTO addNew(@DTO(value=PlayPreviewDTO.class) Play play) {
+	public PlayPreviewDTO addNew(@DTO(value=PlayCreationDTO.class) Play play) {
 		return convertToDto(getDao().insert(play), PlayPreviewDTO.class);
 	}
 	

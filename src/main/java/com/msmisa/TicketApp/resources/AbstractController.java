@@ -1,5 +1,8 @@
 package com.msmisa.TicketApp.resources;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,6 +25,10 @@ public abstract class AbstractController<Entity, Key> {
 		return modelMapper.map(source, to);
 	}
 	
+	protected <E> List<E> convertToDto(List<Entity> source, Class<E> to) {
+		return source.stream().map(e -> convertToDto(e, to)).collect(Collectors.toList());
+	}
+	
 	protected GenericDao<Entity, Key> getDao() {
 		return dao;
 	}
@@ -34,6 +41,7 @@ public abstract class AbstractController<Entity, Key> {
 		dao.delete(id);
 	}
 
+	
 
 }
 
