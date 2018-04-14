@@ -30,11 +30,14 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 	@Autowired
 	private ApplicationContext applicationContext;
 
+	@Autowired
+	private EntityManager entityManager;
+	
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         super.addArgumentResolvers(argumentResolvers);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().applicationContext(this.applicationContext).build();
-        argumentResolvers.add(new DTOModelMapper(objectMapper, sessionFactory));
+        argumentResolvers.add(new DTOModelMapper(objectMapper, sessionFactory, entityManager));
     }
 	
 	@Bean

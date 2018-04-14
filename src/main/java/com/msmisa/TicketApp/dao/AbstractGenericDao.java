@@ -6,9 +6,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 		try{
 			return sessionFactory.getCurrentSession()
 					.createCriteria(entityClass)
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 					.list();
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
@@ -66,6 +69,18 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 		}
 	}
 
+	public List<Entity> getAllIn(List<Key> keys) throws DaoException {
+		// TODO Auto-generated method stub
+		try{
+			return sessionFactory.getCurrentSession()
+					.createCriteria(entityClass)
+					.add(Restrictions.in("id", keys))
+					.list();
+		} catch(HibernateException e){
+			throw new DaoException(e.getMessage());
+		}
+	}
+	
 	@Override
 	//@PreAuthorize("hasAuthority(#this.this.className+'_GET_ID')")
 	public Entity get(Key id) throws DaoException {

@@ -2,8 +2,10 @@ package com.msmisa.TicketApp.dao.user;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -55,5 +57,21 @@ public class UserDaoImpl extends AbstractGenericDao<User, Integer> implements Us
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<User> getByRole(String role) throws DaoException {
+		SessionFactory sf = getSessionFactory();
+		try {
+			Criteria criteria = getSessionFactory().getCurrentSession().createCriteria(User.class, "user");
+			criteria.createAlias("user.userRoles", "role");
+			criteria.add(Restrictions.eq("role.name",role));
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			return criteria.list();
+		} catch(HibernateException e) {
+			
+		}
+		
+		return null;
 	}
 }

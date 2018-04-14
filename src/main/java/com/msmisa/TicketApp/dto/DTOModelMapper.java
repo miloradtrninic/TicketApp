@@ -31,15 +31,19 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.msmisa.TicketApp.beans.Membership;
 
 public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 	private ModelMapper modelMapper = new ModelMapper();
 
 	private SessionFactory sessionFactory;
 
-	public DTOModelMapper(ObjectMapper objectMapper, SessionFactory sessionFactory) {
+	private EntityManager entityManager;
+	
+	public DTOModelMapper(ObjectMapper objectMapper, SessionFactory sessionFactory, EntityManager entityManager) {
 		super(Collections.singletonList(new MappingJackson2HttpMessageConverter(objectMapper)));
 		this.sessionFactory = sessionFactory;
+		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -63,8 +67,10 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 			resolveForeign(dto, mapped);
 			return mapped;
 		} else {
-			Object persistedObject = sessionFactory.getCurrentSession().get(parameter.getParameterType(), id);
-
+			logger.info("persisted object id is " + id);
+			logger.info("class is " + parameter.getParameterType());
+			Object persistedObject = entityManager.find(parameter.getParameterType(), id);
+			logger.info("persisted object is " + persistedObject.getClass());
 			modelMapper.map(dto, persistedObject);
 			return persistedObject;
 		}
@@ -113,7 +119,7 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 								.add(Restrictions.in("id", (List<Integer>)key)).list();
 					} else {
 						key = field.get(dto);
-						value = sessionFactory.getCurrentSession().get(fkAnn.clazzFK(), (Serializable) key);
+						value = entityManager.find(fkAnn.clazzFK(), (Serializable) key);
 					}
 					for(Field fieldMapped : mapped.getClass().getDeclaredFields()) {
 						Type typeMapped = fieldMapped.getType();

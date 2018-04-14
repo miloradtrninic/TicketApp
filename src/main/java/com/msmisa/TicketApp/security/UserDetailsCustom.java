@@ -15,13 +15,15 @@ public class UserDetailsCustom implements org.springframework.security.core.user
 	@JsonIgnore
 	private String password;
 	private String username;
+	private boolean enabled;
 	private List<SimpleGrantedAuthority> grantedAuthorities;
 	
-	public UserDetailsCustom(String username, String password, List<SimpleGrantedAuthority> grantedAuthorities) {
+	public UserDetailsCustom(String username, String password, List<SimpleGrantedAuthority> grantedAuthorities, boolean enabled) {
 		super();
 		this.password = password;
 		this.username = username;
 		this.grantedAuthorities = grantedAuthorities;
+		this.enabled = enabled;
 	}
 	
 	@Override
@@ -62,7 +64,7 @@ public class UserDetailsCustom implements org.springframework.security.core.user
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return enabled;
 	}
 
 }

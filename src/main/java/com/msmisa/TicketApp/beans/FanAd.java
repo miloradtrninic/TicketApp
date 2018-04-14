@@ -38,6 +38,7 @@ public class FanAd {
 	private Boolean accepted;
 	private Date expirationDate;
 	private List<Bid> bidList;
+	private User admin;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -117,6 +118,14 @@ public class FanAd {
 	}
 	public void setBidList(List<Bid> bidList) {
 		this.bidList = bidList;
+	}
+	
+	@ManyToOne
+	public User getAdmin() {
+		return admin;
+	}
+	public void setAdmin(User admin) {
+		this.admin = admin;
 	}
 	
 	

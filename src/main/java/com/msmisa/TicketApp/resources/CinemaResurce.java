@@ -18,7 +18,6 @@ import com.msmisa.TicketApp.beans.Cinema;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.CinemaCreationDTO;
 import com.msmisa.TicketApp.dto.preview.CinemaPreviewDTO;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping(value="/cinema")
