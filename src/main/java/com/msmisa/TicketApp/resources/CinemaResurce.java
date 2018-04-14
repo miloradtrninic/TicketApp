@@ -27,7 +27,7 @@ public class CinemaResurce extends AbstractController<Cinema, Integer>{
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CinemaPreviewDTO>> getAll(){
 		List<Cinema> list = getDao().getAll();
-		List<CinemaPreviewDTO> cinemaDtoList = list.stream().map(c -> convertToDto(c, CinemaPreviewDTO.class)).collect(Collectors.toList());
+		List<CinemaPreviewDTO> cinemaDtoList = convertToDto(list, CinemaPreviewDTO.class);
 		if(list.isEmpty())
 			return new ResponseEntity<List<CinemaPreviewDTO>>(cinemaDtoList,HttpStatus.NO_CONTENT);
 		else

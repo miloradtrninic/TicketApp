@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.Movie;
 import com.msmisa.TicketApp.dto.DTO;
+import com.msmisa.TicketApp.dto.creation.MovieCreationDTO;
 import com.msmisa.TicketApp.dto.preview.MoviePreviewDTO;
 
 @RestController
@@ -35,7 +36,7 @@ public class MovieResource extends AbstractController<Movie, Integer>{
 	@PostMapping(value="/new",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public MoviePreviewDTO addNew(@DTO(value=MoviePreviewDTO.class) Movie movie) {
+	public MoviePreviewDTO addNew(@DTO(value=MovieCreationDTO.class) Movie movie) {
 		return convertToDto(getDao().insert(movie), MoviePreviewDTO.class);
 	}
 	
