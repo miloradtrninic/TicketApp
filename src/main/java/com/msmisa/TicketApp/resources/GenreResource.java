@@ -15,8 +15,8 @@ import com.msmisa.TicketApp.beans.movie.Genre;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.preview.GenrePreviewDTO;
 
-@RestController
-@RequestMapping(value="/genre")
+//@RestController
+//@RequestMapping(value="/genre")
 public class GenreResource extends AbstractController<Genre, Integer> {
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
