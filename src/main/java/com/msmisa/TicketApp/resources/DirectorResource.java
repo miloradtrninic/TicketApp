@@ -8,11 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.movie.Director;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.preview.DirectorPreviewDTO;
 
+@RestController
+@RequestMapping(value="/director")
 public class DirectorResource extends AbstractController<Director, Integer> {
 
 	

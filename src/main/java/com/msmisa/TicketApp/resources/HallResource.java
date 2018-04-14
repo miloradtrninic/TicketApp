@@ -2,7 +2,6 @@ package com.msmisa.TicketApp.resources;
 
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.websocket.server.PathParam;
 
