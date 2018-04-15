@@ -16,7 +16,7 @@ import com.msmisa.TicketApp.beans.Projection;
 
 
 @Entity
-@Table(name="DIRECTORS", catalog="isadb")
+@Table(name="DIRECTORS")
 public class Director {
 	private Integer id;
 	private String name;

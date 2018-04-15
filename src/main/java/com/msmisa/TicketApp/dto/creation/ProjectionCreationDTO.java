@@ -8,7 +8,7 @@ import com.msmisa.TicketApp.beans.movie.Genre;
 import com.msmisa.TicketApp.dto.ForeignKeyDTO;
 
 public class ProjectionCreationDTO {
-	private String naziv;
+	private String name;
 	private Integer ratings;
 	
 	@ForeignKeyDTO(clazzFK=Actor.class)
@@ -21,11 +21,12 @@ public class ProjectionCreationDTO {
 	private String coverPath;
 	private String description;
 	
-	public String getNaziv() {
-		return naziv;
+
+	public String getName() {
+		return name;
 	}
-	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Integer getRatings() {
 		return ratings;

@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.msmisa.TicketApp.beans.Play;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.PlayCreationDTO;
 import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
+import com.msmisa.TicketApp.dto.update.PlayUpdateDTO;
 
 @RestController
 @RequestMapping(value="/play")
@@ -46,5 +48,10 @@ public class PlayResource extends AbstractController<Play, Integer>{
 		return convertToDto(getDao().get(id), PlayPreviewDTO.class);
 	}
 
+	
+	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Play update(@DTO(value=PlayUpdateDTO.class) Play entity){
+		return getDao().update(entity);
+	}
 	
 }

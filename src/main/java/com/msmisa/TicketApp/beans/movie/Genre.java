@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name="GENRES", catalog="isadb")
+@Table(name="GENRES")
 public class Genre {
 	private Integer id;
 	private String name;

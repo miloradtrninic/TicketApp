@@ -3,8 +3,9 @@ package com.msmisa.TicketApp.dto.preview;
 import java.util.List;
 
 public class ProjectionPreviewDTO {
+	
 	private Integer id;
-	private String naziv;
+	private String name;
 	private Integer ratings;
 	private List<ActorPreviewDTO> actors;
 	private List<GenrePreviewDTO> genres;
@@ -21,11 +22,12 @@ public class ProjectionPreviewDTO {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getNaziv() {
-		return naziv;
+	
+	public String getName() {
+		return name;
 	}
-	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Integer getRatings() {
 		return ratings;

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import com.msmisa.TicketApp.beans.Movie;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.MovieCreationDTO;
 import com.msmisa.TicketApp.dto.preview.MoviePreviewDTO;
+import com.msmisa.TicketApp.dto.update.MovieUpdateDTO;
 
 @RestController
 @RequestMapping(value="/movie")
@@ -47,5 +49,10 @@ public class MovieResource extends AbstractController<Movie, Integer>{
 		return convertToDto(getDao().get(id), MoviePreviewDTO.class);
 	}
 	
+	
+	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Movie update(@DTO(value=MovieUpdateDTO.class) Movie entity){
+		return getDao().update(entity);
+	}
 	
 }

@@ -19,6 +19,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.msmisa.TicketApp.beans.movie.Actor;
 import com.msmisa.TicketApp.beans.movie.Director;
@@ -29,7 +32,7 @@ import com.msmisa.TicketApp.beans.movie.Genre;
 @DiscriminatorColumn(name = "entityType",discriminatorType = DiscriminatorType.STRING)
 public abstract class Projection {
 	private Integer id;
-	private String naziv;
+	private String name;
 	private List<FanItem> fanItemList;
 	private Integer ratings;
 	private List<Actor> actors;
@@ -52,11 +55,12 @@ public abstract class Projection {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getNaziv() {
-		return naziv;
+	
+	public String getName() {
+		return name;
 	}
-	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+	public void setName(String name) {
+		this.name = name;
 	}
 	@OneToMany(mappedBy="projection")
 	@JsonIgnore
@@ -73,6 +77,7 @@ public abstract class Projection {
 		this.ratings = ratings;
 	}
 	@ManyToMany(mappedBy="projectionList")
+	@Cascade(CascadeType.SAVE_UPDATE)
 	public List<Actor> getActors() {
 		return actors;
 	}
@@ -80,6 +85,7 @@ public abstract class Projection {
 		this.actors = actors;
 	}
 	@ManyToMany
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinTable(name="PROJECTIONS_GENRES", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="GENRE_ID"))
 	public List<Genre> getGenres() {
 		return genres;
@@ -88,6 +94,7 @@ public abstract class Projection {
 		this.genres = genres;
 	}
 	@ManyToOne
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name="DIRECTOR_ID", nullable=false)
 	public Director getDirector() {
 		return director;
