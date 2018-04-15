@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -26,7 +27,8 @@ import com.msmisa.TicketApp.beans.movie.Director;
 import com.msmisa.TicketApp.beans.movie.Genre;
 
 @Entity
-@Inheritance( strategy = InheritanceType.SINGLE_TABLE )
+@Table(name = "PROJECTION")  
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "entityType",discriminatorType = DiscriminatorType.STRING)
 public abstract class Projection {
 	private Integer id;

@@ -13,6 +13,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -21,7 +22,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Inheritance( strategy = InheritanceType.SINGLE_TABLE )
+@Table(name = "AUDITORIUM")  
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "entityType",discriminatorType = DiscriminatorType.STRING)
 public abstract class Auditorium {
 	private Integer id;

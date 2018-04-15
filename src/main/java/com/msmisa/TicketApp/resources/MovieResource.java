@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.Movie;
+import com.msmisa.TicketApp.dao.projection.MovieDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.MovieCreationDTO;
 import com.msmisa.TicketApp.dto.preview.MoviePreviewDTO;
@@ -43,7 +44,8 @@ public class MovieResource extends AbstractController<Movie, Integer>{
 		movie.getActors().forEach(act -> logger.info(act.getId() + act.getName() + act.getLastName()));
 		logger.info("Director " + movie.getDirector().getName());
 		movie.getGenres().forEach(gen -> logger.info(gen.getId() + gen.getName()));
-		return convertToDto(getDao().insert(movie), MoviePreviewDTO.class);
+		MovieDao movieDao = (MovieDao) getDao();
+		return convertToDto(movieDao.insert(movie), MoviePreviewDTO.class);
 	}
 	
 	

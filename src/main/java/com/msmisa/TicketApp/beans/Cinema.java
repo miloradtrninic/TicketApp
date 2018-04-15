@@ -2,14 +2,15 @@ package com.msmisa.TicketApp.beans;
 
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.SecondaryTable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
-@SecondaryTable(name="CINEMAS")
+@DiscriminatorValue("cinema")
 public class Cinema extends Auditorium {
 	private List<Movie> moviesRepertory;
 	
