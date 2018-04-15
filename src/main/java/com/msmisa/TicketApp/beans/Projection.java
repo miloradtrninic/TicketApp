@@ -3,8 +3,6 @@ package com.msmisa.TicketApp.beans;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -76,8 +74,8 @@ public abstract class Projection {
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
 	}
-	@ManyToMany(mappedBy="projectionList")
-	@Cascade(CascadeType.SAVE_UPDATE)
+	@ManyToMany
+	@JoinTable(name="PROJECTIONS_ACTORS", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="ACTOR_ID"))
 	public List<Actor> getActors() {
 		return actors;
 	}
@@ -94,7 +92,6 @@ public abstract class Projection {
 		this.genres = genres;
 	}
 	@ManyToOne
-	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name="DIRECTOR_ID", nullable=false)
 	public Director getDirector() {
 		return director;

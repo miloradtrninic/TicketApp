@@ -2,21 +2,27 @@ package com.msmisa.TicketApp.dto.creation;
 
 import java.util.List;
 
+import javax.persistence.Id;
+
 import com.msmisa.TicketApp.beans.movie.Actor;
 import com.msmisa.TicketApp.beans.movie.Director;
 import com.msmisa.TicketApp.beans.movie.Genre;
 import com.msmisa.TicketApp.dto.ForeignKeyDTO;
 
 public class ProjectionCreationDTO {
+	
 	private String name;
 	private Integer ratings;
 	
 	@ForeignKeyDTO(clazzFK=Actor.class)
 	private List<Integer> actorIds;
+	
 	@ForeignKeyDTO(clazzFK=Genre.class)
 	private List<Integer> genreIds;
+	
 	@ForeignKeyDTO(clazzFK=Director.class)
 	private Integer directorId;
+	
 	private Integer durationMinutes;
 	private String coverPath;
 	private String description;

@@ -12,8 +12,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-
-import com.msmisa.TicketApp.beans.Projection;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 
 @Entity
@@ -22,7 +22,6 @@ public class Actor {
 	private Integer id;
 	private String name;
 	private String lastName;
-	private List<Projection> projectionList;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,14 +43,6 @@ public class Actor {
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-	@ManyToMany
-	@JoinTable(name="PROJECTIONS_ACTORS", joinColumns=@JoinColumn(name="ACTOR_ID"), inverseJoinColumns=@JoinColumn(name="PROJECTION_ID"))
-	public List<Projection> getProjectionList() {
-		return projectionList;
-	}
-	public void setProjectionList(List<Projection> projectionList) {
-		this.projectionList = projectionList;
 	}
 	
 	

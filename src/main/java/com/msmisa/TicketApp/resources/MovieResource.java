@@ -39,6 +39,10 @@ public class MovieResource extends AbstractController<Movie, Integer>{
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public MoviePreviewDTO addNew(@DTO(value=MovieCreationDTO.class) Movie movie) {
+		movie.setId(null);
+		movie.getActors().forEach(act -> logger.info(act.getId() + act.getName() + act.getLastName()));
+		logger.info("Director " + movie.getDirector().getName());
+		movie.getGenres().forEach(gen -> logger.info(gen.getId() + gen.getName()));
 		return convertToDto(getDao().insert(movie), MoviePreviewDTO.class);
 	}
 	
