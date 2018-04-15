@@ -22,7 +22,6 @@ import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
 @RestController
 @RequestMapping(value="/theatre")
 public class TheatreResource extends AbstractController<Theatre, Integer> {
-
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TheatrePreviewDTO>> getAll(){
 		List<Theatre> list = getDao().getAll();
@@ -33,26 +32,19 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 			return new ResponseEntity<List<TheatrePreviewDTO>>(theatreDtoList,HttpStatus.OK);
 
 	}
-	
-	
+
+
 	@PostMapping(value="/new",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public TheatrePreviewDTO addNew(@DTO(value=TheatreCreationDTO.class) Theatre theatre) {
 		return convertToDto(getDao().insert(theatre), TheatrePreviewDTO.class);
 	}
-	
-	
-	
+
+
+
 	@GetMapping(value="{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public TheatrePreviewDTO getId (@PathVariable(value="id") Integer id) {
 		return convertToDto(getDao().get(id), TheatrePreviewDTO.class);
 	}
-	
-	
-	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Theatre update(@DTO(value=TheatreUpdateDTO.class) Theatre entity){
-		return getDao().update(entity);
-	}
-	
 }

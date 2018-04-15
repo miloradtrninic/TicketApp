@@ -49,7 +49,7 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
                 .allowedOrigins("*")
                 .allowedMethods("*")
                 .allowedHeaders("*")
-                .exposedHeaders("Content-Type", "Date", "Total-Count")
+                .exposedHeaders("Content-Type", "Date", "Total-Count", "Authorization")
                 .maxAge(3600);
             }
         };

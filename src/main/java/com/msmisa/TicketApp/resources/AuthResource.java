@@ -1,10 +1,20 @@
 package com.msmisa.TicketApp.resources;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.hibernate.HibernateException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,6 +32,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +46,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.msmisa.TicketApp.beans.Bid;
 import com.msmisa.TicketApp.beans.FanAd;
+import com.msmisa.TicketApp.beans.Privilege;
 import com.msmisa.TicketApp.beans.User;
 import com.msmisa.TicketApp.beans.UserRole;
 import com.msmisa.TicketApp.dao.user.MembershipDao;
@@ -73,13 +87,13 @@ public class AuthResource {
 
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
-	
+
 	@Autowired
 	private MessageSource messages;
-	
+
 	@Value("Authorization")
 	private String tokenHeader;
-	
+
 	@Value("mySecret")
 	private String secret;
 
@@ -89,23 +103,21 @@ public class AuthResource {
 			produces= {"application/json"})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 		try{
-			User userName = userDao.getByUserName(authenticationRequest.getUsername());
-			User userMail = userDao.getByEmail(authenticationRequest.getUsername());
-			User user = null;
-			
-			if(userName != null || userMail != null) {
-				if(userName == null)
-					user = userMail;
-				else
-					user = userName;
+			User user = userDao.getByUserName(authenticationRequest.getUsername());
+
+			if(user != null) {
 				if(user.isEnabled()) {
-					final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+					UsernamePasswordAuthenticationToken tokenauth = new UsernamePasswordAuthenticationToken(
 							authenticationRequest.getUsername(),
-							authenticationRequest.getPassword()));
+							authenticationRequest.getPassword());
+					final Authentication authentication = authenticationManager.authenticate(tokenauth);
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 					final UserDetails userDetails = myAppUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 					final String token = jwtTokenUtil.generateToken(userDetails);
-					return ResponseEntity.ok(new JwtAuthenticationResponse(token,(UserDetailsCustom)userDetails));
+					List<String> roles = new ArrayList<String>();
+					user.getUserRoles().stream().map(r -> roles.add(r.getName()));
+
+					return ResponseEntity.ok(new JwtAuthenticationResponse(user.getId(), token, roles, getUserPrivilegeNames(user)));
 				} else {
 					return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(messages.getMessage("auth.msg.accLocked", null, new Locale("en)")));
 				}
@@ -115,6 +127,28 @@ public class AuthResource {
 		} catch (BadCredentialsException | UsernameNotFoundException e){
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+	}
+
+	private List<String> getUserRolesNames(User user){
+		List<String> ret = new ArrayList<String>();
+
+		for(UserRole role : user.getUserRoles()) {
+			ret.add(role.getName());
+		}
+
+		return ret;
+	}
+
+	private List<String> getUserPrivilegeNames(User user) {
+		List<String> ret = new ArrayList<String>();
+
+		for(UserRole role : user.getUserRoles()) {
+			for(Privilege p : role.getPrivileges()) {
+				ret.add(p.getName());
+			}
+		}
+
+		return ret;
 	}
 
 	@Secured("ROLE_ANONYMOUS")
@@ -140,7 +174,7 @@ public class AuthResource {
 			user.setFriendRequestsSent(new HashSet<User>());
 			user.setFriends(new HashSet<User>());
 			user.setUserAds(new HashSet<FanAd>());
-			
+
 			try {
 				System.out.println("Treba mail poslati!");
 				String appUrl = request.getContextPath();
@@ -156,24 +190,23 @@ public class AuthResource {
 			String msg = null;
 			if(userName != null)
 				msg = "Username is already taken. Try again with another username.";
-			else if(userEmail != null) 
+			else if(userEmail != null)
 				msg = "User with this e-mail already exists.";
 			ret = ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(msg);
 		}
-		
+
 		return ret;
 	}
-	
+
 	@GetMapping(value="/registrationConfirm")
-	public ResponseEntity<?> confirmRegistration(WebRequest request, @RequestParam("token") String token) {
+	public ResponseEntity<?> confirmRegistration(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
 		System.out.println(token);
 		ResponseEntity<?> ret = null;
-		Locale locale = request.getLocale();
 		String username = jwtTokenUtil.getUsernameFromToken(token);
-		
+
 		Date exp = jwtTokenUtil.getExpirationDateFromToken(token);
 		System.out.println("Username: " + username);
-		
+
 		Date now = new Date();
 		System.out.println("Exp: " + exp.toString());
 		System.out.println("Now" + now.toString());
@@ -181,24 +214,25 @@ public class AuthResource {
 		cal.setTime(now);
 		cal.add(Calendar.DATE, 1);
 		now = cal.getTime();
-		
+
 		boolean isTokenValid = now.after(exp);
-		
+
 		if(!isTokenValid) {
 			String msg = messages.getMessage("auth.msg.invalidToken", null, new Locale("en"));
 			ret = ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(msg);
 		} else {
 			User user = userDao.getByUserName(username);
-		    user.setEnabled(true); 
+		    user.setEnabled(true);
 		    userDao.update(user);
-		    ret = ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).body("redirect:localhost:4200/#/login");
+		    response.sendRedirect("http://localhost:4200/#/login");
+		    ret = ResponseEntity.ok().body("Redirecting you to login...");
 		}
-		
+
 		return ret;
 	}
-	
+
 	private boolean validateUserInfo(User user) {
-		return user.getUsername().length() > 2 && user.getPassword().length() > 8 
+		return user.getUsername().length() > 2 && user.getPassword().length() > 8
 				&& user.getPhoneNo().length() >=9 && user.getPhoneNo().length() <= 10
 				&& user.getLastname() != null && user.getName() != null && user.getEmail().indexOf('@') != -1;
 	}

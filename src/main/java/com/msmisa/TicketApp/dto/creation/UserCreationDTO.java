@@ -6,6 +6,7 @@ public class UserCreationDTO {
 	private String password;
 	private String name, lastname;
 	private String phoneNo;
+	private String city;
 
 
 	public String getUsername() {
@@ -43,6 +44,12 @@ public class UserCreationDTO {
 	}
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 

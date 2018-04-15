@@ -11,7 +11,8 @@ public class UserPreviewDTO {
 	private boolean enabled;
 	private String membershipName;
 	private List<UserRolePreview> userRoles;
-	
+	private String city;
+
 	public Integer getId() {
 		return id;
 	}
@@ -66,6 +67,11 @@ public class UserPreviewDTO {
 	public void setUserRoles(List<UserRolePreview> userRoles) {
 		this.userRoles = userRoles;
 	}
-	
-	
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+
 }

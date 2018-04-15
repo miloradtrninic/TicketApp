@@ -1,6 +1,10 @@
 package com.msmisa.TicketApp.security;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +36,23 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Value("Authorization")
     private String tokenHeader;
 
+    private void getHeadersInfo(HttpServletRequest request) {
+
+        Map<String, String> map = new HashMap<String, String>();
+
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            System.out.println(key + " : " + value);
+        }
+    }
+
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        final String requestHeader = request.getHeader(this.tokenHeader);
+        getHeadersInfo(request);
+    	final String requestHeader = request.getHeader(this.tokenHeader);
         String username = null;
         String authToken = null;
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
