@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,9 @@ public class UserResource extends AbstractController<User, Integer> {
 	@Autowired
 	private UserDao userDao;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
 	@GetMapping(value="{id}", produces = {"application/json"})
 	public UserPreviewDTO getUser(@PathVariable("id") String id) {
 		return convertToDto(userDao.get(Integer.parseInt(id)), UserPreviewDTO.class);
@@ -55,8 +59,11 @@ public class UserResource extends AbstractController<User, Integer> {
 	public ResponseEntity<Set<UserPreviewDTO>> getUsersFriends(@PathVariable("id") Integer id) {
 		ResponseEntity<Set<UserPreviewDTO>> ret = null;
 		User user = userDao.get(id);
+		List<User> allUsers = userDao.getAll();
 		Set<User> users = user.getFriends();
-		Set<UserPreviewDTO> usersDTO = users.stream().map(u -> convertToDto(u, UserPreviewDTO.class)).collect(Collectors.toSet());
+		Set<UserPreviewDTO> usersDTO = allUsers.stream()
+											.filter(u -> users.contains(u) == true && u.getId() != user.getId())
+											.map(u -> convertToDto(u, UserPreviewDTO.class)).collect(Collectors.toSet());
 		
 		if(usersDTO.isEmpty())
 			ret = new ResponseEntity<Set<UserPreviewDTO>>(usersDTO, HttpStatus.NO_CONTENT);
@@ -72,8 +79,12 @@ public class UserResource extends AbstractController<User, Integer> {
 		User user = userDao.get(id);
 		List<User> allUsers = userDao.getAll();
 		Set<User> users = user.getFriends();
-		Set<UserPreviewDTO> usersDTO = allUsers.stream().filter(u -> users.contains(u))
+		Set<UserPreviewDTO> usersDTO = allUsers.stream()
+									.filter(u -> users.contains(u) == false &&
+												 user.getFriendRequests().contains(u) == false &&
+												 u.getId() != user.getId())
 									.map(u -> convertToDto(u, UserPreviewDTO.class)).collect(Collectors.toSet());
+
 		if(usersDTO.isEmpty())
 			ret = new ResponseEntity<Set<UserPreviewDTO>>(usersDTO, HttpStatus.NO_CONTENT);
 		else
@@ -88,9 +99,12 @@ public class UserResource extends AbstractController<User, Integer> {
 		User sender = userDao.get(senderId);
 		User target = userDao.get(targetId);
 		
-		if(!sender.getFriends().contains(target) && !target.getFriendRequests().contains(sender) && !target.getFriends().contains(sender)) {
+		if(!sender.getFriends().contains(target) && !sender.getFriendRequestsSent().contains(target) && 
+			!target.getFriendRequests().contains(sender) && !target.getFriends().contains(sender)) {
 			sender.getFriendRequestsSent().add(target);
 			target.getFriendRequests().add(sender);
+			userDao.update(sender);
+			userDao.update(target);
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
 		} else {
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
@@ -107,7 +121,15 @@ public class UserResource extends AbstractController<User, Integer> {
 		
 		if(sender.getFriends().contains(target) && target.getFriends().contains(sender)) {
 			sender.getFriendRequestsSent().remove(target);
+			sender.getFriends().remove(target);
 			target.getFriendRequests().remove(sender);
+			target.getFriends().remove(sender);
+			userDao.update(sender);
+			userDao.update(target);
+			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
+		} else if(sender.getFriendRequestsSent().contains(target)) {
+			sender.getFriendRequestsSent().remove(target);
+			userDao.update(sender);
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
 		} else {
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
@@ -127,7 +149,9 @@ public class UserResource extends AbstractController<User, Integer> {
 			target.getFriends().add(sender);
 			target.getFriendRequests().remove(sender);
 			sender.getFriends().add(target);
-			
+			sender.getFriendRequestsSent().remove(target);
+			userDao.update(sender);
+			userDao.update(target);
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
 		} catch(Exception e ) {
 			System.out.println("Greska pri prihvatanju prijatelja");
@@ -148,7 +172,8 @@ public class UserResource extends AbstractController<User, Integer> {
 		try {
 			target.getFriendRequests().remove(sender);
 			sender.getFriendRequestsSent().remove(target);
-			
+			userDao.update(sender);
+			userDao.update(target);
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
 		} catch(Exception e ) {
 			System.out.println("Greska pri prihvatanju prijatelja");
@@ -178,6 +203,39 @@ public class UserResource extends AbstractController<User, Integer> {
 			System.out.println("Ne moze update..");
 			e.printStackTrace();
 			ret = new ResponseEntity<String>("Error updating user info.", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return ret;
+	}
+	
+	@PutMapping(value="/changePw/{id}", consumes= {"text/plain"}, produces= {"application/json"})
+	public ResponseEntity<?> changePassword(@RequestBody String newPw, @PathVariable("id") String id) {
+		ResponseEntity<?> ret = null;
+		User u = userDao.get(Integer.parseInt(id));
+		
+		if(u != null) {
+			u.setPassword(passwordEncoder.encode(newPw));
+			userDao.update(u);
+			ret =  new ResponseEntity<UserPreviewDTO>(convertToDto(userDao.update(u), UserPreviewDTO.class), HttpStatus.OK);
+		} else {
+			ret = new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+		}
+		
+		return ret;
+	}
+	
+	@GetMapping(value="/getFriendRequests/{id}", produces= {"application/json"})
+	public ResponseEntity<?> getFriendRequests(@PathVariable("id") String id) {
+		ResponseEntity<?> ret = null;
+		User u = userDao.get(Integer.parseInt(id));
+		
+		if(u != null) {
+			List<UserPreviewDTO> usersDTO = u.getFriendRequests().stream()
+					.map(us -> convertToDto(us, UserPreviewDTO.class)).collect(Collectors.toList());
+			
+			ret =  new ResponseEntity<List<UserPreviewDTO>>(usersDTO, HttpStatus.OK);
+		} else {
+			ret = new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
 		}
 		
 		return ret;
