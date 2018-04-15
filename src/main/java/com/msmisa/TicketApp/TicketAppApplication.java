@@ -1,6 +1,8 @@
 package com.msmisa.TicketApp;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManagerFactory;
+
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -9,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import com.msmisa.TicketApp.beans.Termin;
 import com.msmisa.TicketApp.dto.preview.TerminPreviewDTO;
 
 
 
 @SpringBootApplication
+@EnableTransactionManagement
 public class TicketAppApplication {
 
 	public static void main(String[] args) {
@@ -30,7 +35,13 @@ public class TicketAppApplication {
 	    if (entityManagerFactory.unwrap(SessionFactory.class) == null) {
 	        throw new NullPointerException("factory is not a hibernate factory");
 	    }
-	    return entityManagerFactory.unwrap(SessionFactory.class);
+	    SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
+	    try {
+	    	sessionFactory.getCurrentSession();
+	    } catch (HibernateException e) {
+	    	sessionFactory.openSession();
+	    }
+	    return sessionFactory;
 	}
 	
 	@Bean

@@ -2,7 +2,8 @@ package com.msmisa.TicketApp.resources;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,7 +21,8 @@ public abstract class AbstractController<Entity, Key> {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	protected <E> E convertToDto(Entity source, Class<E> to) {
 		return modelMapper.map(source, to);
 	}
