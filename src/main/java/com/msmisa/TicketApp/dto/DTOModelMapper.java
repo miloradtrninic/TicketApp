@@ -1,7 +1,5 @@
 package com.msmisa.TicketApp.dto;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -12,31 +10,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
 import javax.validation.constraints.NotNull;
 
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -44,11 +35,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.Predicate;
-import com.msmisa.TicketApp.beans.Membership;
-import com.msmisa.TicketApp.dto.creation.MovieCreationDTO;
-
-import ch.qos.logback.core.Context;
 
 public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 	private ModelMapper modelMapper = new ModelMapper();
@@ -154,7 +140,9 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 						Root root = query.from(fkAnn.clazzFK());
 						query.select(root);
 						query.where(root.get("id").in((Collection)key));
-						value = entityManager.createQuery(query).getResultList();
+						value = new HashSet<>(entityManager
+								.createQuery(query)
+								.getResultList());
 						logger.info("generic values " + value);
 					} else {
 						logger.info(field.getName() + " field is simple");
@@ -177,7 +165,7 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 						// check if class matches with annotation
 						logger.info("checking if field " + fieldMapped.getName() + " matches " + fkAnn.clazzFK());
 						if(typeMapped.equals(fkAnn.clazzFK())) {
-							logger.info("same class " +typeMapped.getTypeName());
+							logger.info("same class " + typeMapped.getTypeName());
 							logger.info("setting values for mapped field " + fieldMapped.getName() + " value " + value);
 							fieldMapped.setAccessible(true);
 							fieldMapped.set(mapped, value);

@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="HALLSEGMENTS")
@@ -23,7 +24,7 @@ public class HallSegment {
 	private Hall hall;
 	private String name;
 	private Integer seatingsNo;
-	private List<Seating> seatingList;
+	private Set<Seating> seatingList;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -57,10 +58,10 @@ public class HallSegment {
 	}
 	@JsonManagedReference(value="segment_seating")
 	@OneToMany(mappedBy="hallSegment")
-	public List<Seating> getSeatingList() {
+	public Set<Seating> getSeatingList() {
 		return seatingList;
 	}
-	public void setSeatingList(List<Seating> seatingList) {
+	public void setSeatingList(Set<Seating> seatingList) {
 		this.seatingList = seatingList;
 	}
 	

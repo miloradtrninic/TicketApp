@@ -1,6 +1,7 @@
 package com.msmisa.TicketApp.beans;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -33,7 +34,7 @@ public abstract class Auditorium {
 	private Integer ratings;
 	private FanZone fanZone;
 	
-	private List<Hall> hallList;
+	private Set<Hall> hallList;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -80,10 +81,10 @@ public abstract class Auditorium {
 	@JsonIgnore
 	@OneToMany(mappedBy="auditorium")
 	@Cascade(value=CascadeType.ALL)
-	public List<Hall> getHallList() {
+	public Set<Hall> getHallList() {
 		return hallList;
 	}
-	public void setHallList(List<Hall> hallList) {
+	public void setHallList(Set<Hall> hallList) {
 		this.hallList = hallList;
 	}
 	

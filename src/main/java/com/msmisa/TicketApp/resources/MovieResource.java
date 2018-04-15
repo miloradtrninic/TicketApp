@@ -27,11 +27,11 @@ public class MovieResource extends AbstractController<Movie, Integer>{
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MoviePreviewDTO>> getAll(){
 		List<Movie> list = getDao().getAll();
-		List<MoviePreviewDTO> movieDtoList = list.stream().map(c -> convertToDto(c, MoviePreviewDTO.class)).collect(Collectors.toList());
+		
 		if(list.isEmpty())
-			return new ResponseEntity<List<MoviePreviewDTO>>(movieDtoList,HttpStatus.NO_CONTENT);
+			return new ResponseEntity<List<MoviePreviewDTO>>(convertToDto(list, MoviePreviewDTO.class),HttpStatus.NO_CONTENT);
 		else
-			return new ResponseEntity<List<MoviePreviewDTO>>(movieDtoList,HttpStatus.OK);
+			return new ResponseEntity<List<MoviePreviewDTO>>(convertToDto(list, MoviePreviewDTO.class),HttpStatus.OK);
 
 	}
 	

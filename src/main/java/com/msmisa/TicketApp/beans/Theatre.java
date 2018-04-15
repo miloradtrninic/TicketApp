@@ -1,6 +1,7 @@
 package com.msmisa.TicketApp.beans;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -12,14 +13,14 @@ import javax.persistence.SecondaryTable;
 @Entity
 @DiscriminatorValue("theatre")
 public class Theatre extends Auditorium {
-	private List<Play> plays;
+	private Set<Play> plays;
 
 	@ManyToMany(mappedBy="theatre")
-	public List<Play> getPlays() {
+	public Set<Play> getPlays() {
 		return plays;
 	}
 
-	public void setPlays(List<Play> plays) {
+	public void setPlays(Set<Play> plays) {
 		this.plays = plays;
 	}
 	

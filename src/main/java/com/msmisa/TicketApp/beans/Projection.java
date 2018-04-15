@@ -3,10 +3,13 @@ package com.msmisa.TicketApp.beans;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -35,15 +38,15 @@ public abstract class Projection {
 	private String name;
 	private List<FanItem> fanItemList;
 	private Integer ratings;
-	private List<Actor> actors;
-	private List<Genre> genres;
+	private Set<Actor> actors;
+	private Set<Genre> genres;
 	private Director director;
 	private Integer durationMinutes;
 	private String coverPath;
 	private String description;
 
-	private List<Termin> projectionTime;
-	private List<Ticket> ticketList;
+	private Set<Termin> projectionTime;
+	private Set<Ticket> ticketList;
 	
 	
 	@Id
@@ -62,7 +65,7 @@ public abstract class Projection {
 	public void setName(String name) {
 		this.name = name;
 	}
-	@OneToMany(mappedBy="projection")
+	@OneToMany(mappedBy="projection", fetch=FetchType.EAGER)
 	@JsonIgnore
 	public List<FanItem> getFanItemList() {
 		return fanItemList;
@@ -76,24 +79,25 @@ public abstract class Projection {
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
 	}
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinTable(name="PROJECTIONS_ACTORS", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="ACTOR_ID"))
-	public List<Actor> getActors() {
+	public Set<Actor> getActors() {
 		return actors;
 	}
-	public void setActors(List<Actor> actors) {
+	public void setActors(Set<Actor> actors) {
 		this.actors = actors;
 	}
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinTable(name="PROJECTIONS_GENRES", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="GENRE_ID"))
-	public List<Genre> getGenres() {
+	public Set<Genre> getGenres() {
 		return genres;
 	}
-	public void setGenres(List<Genre> genres) {
+	public void setGenres(Set<Genre> genres) {
 		this.genres = genres;
 	}
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="DIRECTOR_ID", nullable=false)
 	public Director getDirector() {
 		return director;
@@ -119,20 +123,20 @@ public abstract class Projection {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	@OneToMany(mappedBy="projection")
+	@OneToMany(mappedBy="projection", fetch=FetchType.EAGER)
 	@JsonIgnore
-	public List<Termin> getProjectionTime() {
+	public Set<Termin> getProjectionTime() {
 		return projectionTime;
 	}
-	public void setProjectionTime(List<Termin> projectionTime) {
+	public void setProjectionTime(Set<Termin> projectionTime) {
 		this.projectionTime = projectionTime;
 	}
-	@OneToMany(mappedBy="projection")
+	@OneToMany(mappedBy="projection", fetch=FetchType.EAGER)
 	@JsonIgnore
-	public List<Ticket> getTicketList() {
+	public Set<Ticket> getTicketList() {
 		return ticketList;
 	}
-	public void setTicketList(List<Ticket> ticketList) {
+	public void setTicketList(Set<Ticket> ticketList) {
 		this.ticketList = ticketList;
 	}
 	

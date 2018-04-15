@@ -1,6 +1,7 @@
 package com.msmisa.TicketApp.beans;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -16,16 +17,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("movie")
 public class Movie extends Projection {
-	private List<Cinema> cinemaList;
+	private Set<Cinema> cinemaList;
 
 	@ManyToMany
 	@JoinTable(name="CINEMA_MOVIE", joinColumns=@JoinColumn(name="MOVIE_ID", nullable=false), inverseJoinColumns=@JoinColumn(name="CINEMA_ID", nullable=false))
 	@JsonIgnore
-	public List<Cinema> getCinemaList() {
+	public Set<Cinema> getCinemaList() {
 		return cinemaList;
 	}
 
-	public void setCinemaList(List<Cinema> cinemaList) {
+	public void setCinemaList(Set<Cinema> cinemaList) {
 		this.cinemaList = cinemaList;
 	}
 	

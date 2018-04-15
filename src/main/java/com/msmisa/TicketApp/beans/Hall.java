@@ -1,6 +1,7 @@
 package com.msmisa.TicketApp.beans;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ public class Hall {
 	private Integer id;
 	private String name;
 	private Auditorium auditorium;
-	private List<HallSegment> hallSegmentList;
+	private Set<HallSegment> hallSegmentList;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -54,10 +55,10 @@ public class Hall {
 	@JsonManagedReference(value="hall_segment")
 	@OneToMany(mappedBy="hall")
 	@Cascade(value=CascadeType.ALL)
-	public List<HallSegment> getHallSegmentList() {
+	public Set<HallSegment> getHallSegmentList() {
 		return hallSegmentList;
 	}
-	public void setHallSegmentList(List<HallSegment> hallSegmentList) {
+	public void setHallSegmentList(Set<HallSegment> hallSegmentList) {
 		this.hallSegmentList = hallSegmentList;
 	}
 	

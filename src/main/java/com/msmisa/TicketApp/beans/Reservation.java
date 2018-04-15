@@ -1,6 +1,8 @@
 package com.msmisa.TicketApp.beans;
 
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +19,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Reservation {
 	private Integer id;
 	private User reservedBy;
-	private List<Ticket> ticketList;
+	private Set<Ticket> ticketList;
 	
 	
 	@Id
@@ -39,10 +41,10 @@ public class Reservation {
 	}
 	@OneToMany
 	@JoinTable(name="TICKET_RESERERVATION",joinColumns=@JoinColumn(name="RESERVATION_ID"), inverseJoinColumns=@JoinColumn(name="TICKET_ID"))
-	public List<Ticket> getTicketList() {
+	public Set<Ticket> getTicketList() {
 		return ticketList;
 	}
-	public void setTicketList(List<Ticket> ticketList) {
+	public void setTicketList(Set<Ticket> ticketList) {
 		this.ticketList = ticketList;
 	}
 	

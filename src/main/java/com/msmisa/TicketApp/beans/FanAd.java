@@ -4,6 +4,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +38,7 @@ public class FanAd {
 	private FanItem fanItem;
 	private Boolean accepted;
 	private Date expirationDate;
-	private List<Bid> bidList;
+	private Set<Bid> bidList;
 	private User admin;
 	
 	@Id
@@ -113,10 +114,10 @@ public class FanAd {
 	@OneToMany(mappedBy="fanAd")
 	@JsonManagedReference(value="bid_ad")
 	@Cascade(value=CascadeType.ALL)
-	public List<Bid> getBidList() {
+	public Set<Bid> getBidList() {
 		return bidList;
 	}
-	public void setBidList(List<Bid> bidList) {
+	public void setBidList(Set<Bid> bidList) {
 		this.bidList = bidList;
 	}
 	

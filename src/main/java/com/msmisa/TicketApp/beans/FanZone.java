@@ -3,6 +3,7 @@ package com.msmisa.TicketApp.beans;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public class FanZone {
 	private Integer id;
 	private User admin;
 	private Auditorium auditorium;
-	private List<FanItem> fanitemList;
+	private Set<FanItem> fanitemList;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -49,10 +50,10 @@ public class FanZone {
 	@OneToMany(mappedBy="fanzone")
 	@JsonManagedReference(value="zone_item")
 	@Cascade(value=CascadeType.ALL)
-	public List<FanItem> getFanitemList() {
+	public Set<FanItem> getFanitemList() {
 		return fanitemList;
 	}
-	public void setFanitemList(List<FanItem> fanitemList) {
+	public void setFanitemList(Set<FanItem> fanitemList) {
 		this.fanitemList = fanitemList;
 	}
 	
