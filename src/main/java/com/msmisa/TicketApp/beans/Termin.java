@@ -1,7 +1,6 @@
 package com.msmisa.TicketApp.beans;
 
 import java.sql.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -27,7 +26,8 @@ public class Termin {
 	
 	private Projection projection;
 	private Set<Hall> hallList;
-	private Date time;
+	private Date date;
+	private String time;
 	private Integer price;
 	
 	
@@ -56,10 +56,17 @@ public class Termin {
 	public void setHallList(Set<Hall> hallList) {
 		this.hallList = hallList;
 	}
-	public Date getTime() {
+
+	public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	public String getTime() {
 		return time;
 	}
-	public void setTime(Date time) {
+	public void setTime(String time) {
 		this.time = time;
 	}
 	public Integer getPrice() {

@@ -3,11 +3,13 @@ package com.msmisa.TicketApp.dto.preview;
 import java.util.Date;
 import java.util.List;
 
+
 public class TerminPreviewDTO {
 	private Integer id;
 	private List<String> hallListNames;
-	private Date time;
+	private Date date;
 	private Integer price;
+	private String time;
 	
 	public Integer getId() {
 		return id;
@@ -21,10 +23,17 @@ public class TerminPreviewDTO {
 	public void setHallListNames(List<String> hallListNames) {
 		this.hallListNames = hallListNames;
 	}
-	public Date getTime() {
+	
+	public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	public String getTime() {
 		return time;
 	}
-	public void setTime(Date time) {
+	public void setTime(String time) {
 		this.time = time;
 	}
 	public Integer getPrice() {
