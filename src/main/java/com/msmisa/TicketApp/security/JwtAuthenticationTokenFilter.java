@@ -56,13 +56,17 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         String authToken = null;
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+        	logger.info("token is :");
             authToken = requestHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(authToken);
-            } catch (IllegalArgumentException e) {
-                logger.error("an error occured during getting username from token", e);
-            } catch (ExpiredJwtException e1) {
-            	response.setStatus(401);
+            logger.info(authToken);
+            if(!authToken.trim().isEmpty()) {
+	            try {
+	                username = jwtTokenUtil.getUsernameFromToken(authToken);
+	            } catch (IllegalArgumentException e) {
+	                logger.error("an error occured during getting username from token", e);
+	            } catch (ExpiredJwtException e1) {
+	            	response.setStatus(401);
+	            }
             }
         } else {
             logger.warn("couldn't find bearer string, will ignore the header");
