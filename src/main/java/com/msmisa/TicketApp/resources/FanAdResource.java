@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +39,16 @@ public class FanAdResource extends AbstractController<FanAd, Integer> {
 			return new ResponseEntity<List<FanAdPreviewDTO>>(fanadDtoList,HttpStatus.OK);
 	}
 	
+	@GetMapping(value="getAll/{zoneID}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<FanAdPreviewDTO>> getAllByZone(@PathVariable("zoneID") Integer zoneID) {
+		FanAdDao dao = (FanAdDao) getDao();
+		List<FanAd> items = dao.getByZone(zoneID);
+		if(items.isEmpty())
+			return new ResponseEntity<List<FanAdPreviewDTO>>(convertToDto(items, FanAdPreviewDTO.class),HttpStatus.NO_CONTENT);
+		else
+			return new ResponseEntity<List<FanAdPreviewDTO>>(convertToDto(items, FanAdPreviewDTO.class),HttpStatus.OK);
+	}
+	
 	@GetMapping(value="toapprove", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanAdPreviewDTO>> toapprove(){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -48,7 +59,11 @@ public class FanAdResource extends AbstractController<FanAd, Integer> {
 		else
 			return new ResponseEntity<List<FanAdPreviewDTO>>(fanadDtoList,HttpStatus.OK);
 	}
-	
+	@GetMapping(value="{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<FanAdPreviewDTO> approve(@PathVariable("id") Integer id) {
+		FanAd fanAd = getDao().get(id);
+		return new ResponseEntity<FanAdPreviewDTO>(convertToDto(fanAd, FanAdPreviewDTO.class), HttpStatus.OK);
+	}
 	
 	@PutMapping(value="approve", consumes=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<FanAdPreviewDTO> approve(@DTO(FanAdPreviewDTO.class) FanAd fanAd) {

@@ -5,13 +5,18 @@ import java.util.List;
 import com.msmisa.TicketApp.beans.Auditorium;
 import com.msmisa.TicketApp.beans.HallSegment;
 import com.msmisa.TicketApp.dto.ForeignKeyDTO;
+import com.msmisa.TicketApp.dto.preview.HallSegmentPreviewDTO;
 
 public class HallCreationDTO {
+	
 	private String name;
-	@ForeignKeyDTO(clazzFK=Auditorium.class)
-	private Integer auditorium;
-	@ForeignKeyDTO(clazzFK=HallSegment.class)
-	private List<Integer> hallSegmentListIds;
+	private Integer audId;
+	
+	private List<HallSegmentPreviewDTO> hallSegmentList;
+	
+	public HallCreationDTO() {
+		
+	}
 	
 	public String getName() {
 		return name;
@@ -19,17 +24,17 @@ public class HallCreationDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Integer getAuditorium() {
-		return auditorium;
+	public Integer getAudId() {
+		return audId;
 	}
-	public void setAuditorium(Integer auditorium) {
-		this.auditorium = auditorium;
+	public void setAudId(Integer audId) {
+		this.audId = audId;
 	}
-	public List<Integer> getHallSegmentListIds() {
-		return hallSegmentListIds;
+	public List<HallSegmentPreviewDTO> getHallSegmentList() {
+		return hallSegmentList;
 	}
-	public void setHallSegmentListIds(List<Integer> hallSegmentListIds) {
-		this.hallSegmentListIds = hallSegmentListIds;
+	public void setHallSegmentList(List<HallSegmentPreviewDTO> hallSegmentList) {
+		this.hallSegmentList = hallSegmentList;
 	}
 	
 	

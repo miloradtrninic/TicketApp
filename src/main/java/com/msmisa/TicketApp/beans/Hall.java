@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +15,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -43,18 +46,16 @@ public class Hall {
 	public void setName(String name) {
 		this.name = name;
 	}
-	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name="AUDITORIUM_ID", nullable=false)
 	public Auditorium getAuditorium() {
 		return auditorium;
 	}
 	public void setAuditorium(Auditorium auditorium) {
 		this.auditorium = auditorium;
 	}
-	@JsonManagedReference(value="hall_segment")
-	@OneToMany(mappedBy="hall")
+	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER)
 	@Cascade(value=CascadeType.ALL)
+	@JoinColumn(name = "hall_id")
 	public Set<HallSegment> getHallSegmentList() {
 		return hallSegmentList;
 	}

@@ -1,10 +1,12 @@
 package com.msmisa.TicketApp.dto.preview;
 
+import java.util.Date;
+
 public class BidPreviewDTO {
 	private Integer id;
-	private UserPreviewDTO fromUser;
-	private String offer;
-	private FanAdPreviewDTO fanAd;
+	private Double offer;
+	private String fromUserUsername;
+	private Date offerDate;
 	
 	public Integer getId() {
 		return id;
@@ -12,24 +14,23 @@ public class BidPreviewDTO {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public UserPreviewDTO getFromUser() {
-		return fromUser;
-	}
-	public void setFromUser(UserPreviewDTO fromUser) {
-		this.fromUser = fromUser;
-	}
-	public String getOffer() {
+	public Double getOffer() {
 		return offer;
 	}
-	public void setOffer(String offer) {
+	public void setOffer(Double offer) {
 		this.offer = offer;
 	}
-	public FanAdPreviewDTO getFanAd() {
-		return fanAd;
+	public String getFromUserUsername() {
+		return fromUserUsername;
 	}
-	public void setFanAd(FanAdPreviewDTO fanAd) {
-		this.fanAd = fanAd;
+	public void setFromUserUsername(String fromUserUsername) {
+		this.fromUserUsername = fromUserUsername;
 	}
-	
+	public Date getOfferDate() {
+		return offerDate;
+	}
+	public void setOfferDate(Date offerDate) {
+		this.offerDate = offerDate;
+	}
 	
 }

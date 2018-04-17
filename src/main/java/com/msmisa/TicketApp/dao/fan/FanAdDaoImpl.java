@@ -39,16 +39,32 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 
 
 	@Override
-	public List<FanAd> getFromMyZone(String username) throws DaoException {
+	public List<FanAd> getFromMyZone(String adminUsername) throws DaoException {
 		// TODO Auto-generated method stub
 		try{
 			return getSessionFactory().getCurrentSession()
 					.createCriteria(FanAd.class)
 					.createAlias("fanZone", "fz")
 					.createAlias("fz.admin", "fza")
-					.add(Restrictions.eq("fza.username", username))
+					.add(Restrictions.eq("fza.username", adminUsername))
 					.list();
 		} catch(HibernateException e){
+			throw new DaoException(e.getMessage());
+		}
+	}
+
+
+	@Override
+	public List<FanAd> getByZone(Integer zoneID) throws DaoException {
+		// TODO Auto-generated method stub
+		try {
+			return getSessionFactory()
+					.getCurrentSession()
+					.createCriteria(FanAd.class)
+					.createAlias("fanZone", "fz")
+					.add(Restrictions.eq("fz.id", zoneID))
+					.list();
+		} catch (HibernateException e) {
 			throw new DaoException(e.getMessage());
 		}
 	}

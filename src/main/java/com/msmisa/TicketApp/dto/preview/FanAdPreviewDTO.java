@@ -10,7 +10,6 @@ public class FanAdPreviewDTO {
 	private Date dateCreated;
 	private String imagePath;
 	private UserPreviewDTO postedBy;
-	private FanItemPreviewDTO fanItem;
 	private Boolean accepted;
 	private Date expirationDate;
 	private List<BidPreviewDTO> bidList;
@@ -50,12 +49,6 @@ public class FanAdPreviewDTO {
 	}
 	public void setPostedBy(UserPreviewDTO postedBy) {
 		this.postedBy = postedBy;
-	}
-	public FanItemPreviewDTO getFanItem() {
-		return fanItem;
-	}
-	public void setFanItem(FanItemPreviewDTO fanItem) {
-		this.fanItem = fanItem;
 	}
 	public Boolean getAccepted() {
 		return accepted;

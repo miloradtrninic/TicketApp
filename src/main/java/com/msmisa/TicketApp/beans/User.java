@@ -47,6 +47,7 @@ public class User {
 	private Set<FanAd> userAds;
 	private Set<Bid> bidList;
 	private Set<UserRole> userRoles;
+	private Set<FanItem> fanItems;
 	private Membership membership;
 	
 	
@@ -170,7 +171,7 @@ public class User {
 		this.bidList = bidList;
 	}
 	@ManyToMany(fetch=FetchType.EAGER)
-	@Cascade(value=CascadeType.ALL)
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinTable(name="USERS_ROLES", joinColumns= @JoinColumn(name="USER_ID"), inverseJoinColumns=@JoinColumn(name = "ROLE_ID"))
 	public Set<UserRole> getUserRoles() {
 		return userRoles;
@@ -179,7 +180,7 @@ public class User {
 		this.userRoles = userRole;
 	}
 	@OneToOne
-	@Cascade(value=CascadeType.ALL)
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name="MEMBERSHIP_TYPE", nullable=false)
 	public Membership getMembership() {
 		return membership;
@@ -193,5 +194,15 @@ public class User {
 	public void setCity(String city) {
 		this.city = city;
 	}
+	@ManyToMany
+	@Cascade(CascadeType.SAVE_UPDATE)
+	@JoinTable(name="USERS_ITEMS", joinColumns= @JoinColumn(name="USER_ID"), inverseJoinColumns=@JoinColumn(name = "ITEM_ID"))
+	public Set<FanItem> getFanItems() {
+		return fanItems;
+	}
+	public void setFanItems(Set<FanItem> fanItems) {
+		this.fanItems = fanItems;
+	}
+	
 	
 }

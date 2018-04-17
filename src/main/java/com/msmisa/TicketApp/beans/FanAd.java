@@ -35,7 +35,6 @@ public class FanAd {
 	private String imagePath;
 	private User postedBy;
 	private FanZone fanZone;
-	private FanItem fanItem;
 	private Boolean accepted;
 	private Date expirationDate;
 	private Set<Bid> bidList;
@@ -90,14 +89,6 @@ public class FanAd {
 	}
 	public void setFanZone(FanZone fanZone) {
 		this.fanZone = fanZone;
-	}
-	@OneToOne
-	@JoinColumn(name="FANITEM_ID")
-	public FanItem getFanItem() {
-		return fanItem;
-	}
-	public void setFanItem(FanItem fanItem) {
-		this.fanItem = fanItem;
 	}
 	public Boolean getAccepted() {
 		return accepted;

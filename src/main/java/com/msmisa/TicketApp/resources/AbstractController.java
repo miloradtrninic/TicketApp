@@ -6,7 +6,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,7 +21,7 @@ public abstract class AbstractController<Entity, Key> {
 	private GenericDao<Entity, Key> dao;
 	
 	@Autowired
-	private ModelMapper modelMapper;
+	protected ModelMapper modelMapper;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -39,8 +41,10 @@ public abstract class AbstractController<Entity, Key> {
 
 	@RequestMapping(value="/delete/{id}",
 			method=RequestMethod.DELETE)
-	public void delete(@PathVariable(value="id") Key id){
+	public ResponseEntity<?> delete(@PathVariable(value="id") Key id){
+		Entity ent = dao.get(id);
 		dao.delete(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	

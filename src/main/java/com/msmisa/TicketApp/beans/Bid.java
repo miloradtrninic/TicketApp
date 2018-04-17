@@ -1,4 +1,8 @@
 package com.msmisa.TicketApp.beans;
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import static javax.persistence.GenerationType.IDENTITY;
 
 
 @Entity
@@ -17,8 +20,9 @@ public class Bid {
 	private Integer id;
 	//private User toUser; iz fanAd se vidi kome je
 	private User fromUser;
-	private String offer;
+	private Double offer;
 	private FanAd fanAd;
+	private Date offerDate;
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -38,10 +42,10 @@ public class Bid {
 	public void setFromUser(User fromUser) {
 		this.fromUser = fromUser;
 	}
-	public String getOffer() {
+	public Double getOffer() {
 		return offer;
 	}
-	public void setOffer(String offer) {
+	public void setOffer(Double offer) {
 		this.offer = offer;
 	}
 	@JsonBackReference(value="bid_ad")
@@ -53,5 +57,12 @@ public class Bid {
 	public void setFanAd(FanAd fanAd) {
 		this.fanAd = fanAd;
 	}
+	public Date getOfferDate() {
+		return offerDate;
+	}
+	public void setOfferDate(Date offerDate) {
+		this.offerDate = offerDate;
+	}
+	
 	
 }

@@ -10,4 +10,5 @@ public interface FanAdDao extends GenericDao<FanAd, Integer>{
 
 	List<FanAd> getFromMyZone(String username) throws DaoException;
 	List<FanAd> getMyToApprove(String username) throws DaoException;
+	List<FanAd> getByZone(Integer zoneID) throws DaoException;
 }

@@ -2,12 +2,16 @@ package com.msmisa.TicketApp.beans;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -35,8 +39,8 @@ public class HallSegment {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@JsonBackReference(value="hall_segment")
 	@ManyToOne
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name="HALL_ID", nullable=false)
 	public Hall getHall() {
 		return hall;
@@ -56,8 +60,8 @@ public class HallSegment {
 	public void setSeatingsNo(Integer seatingsNo) {
 		this.seatingsNo = seatingsNo;
 	}
-	@JsonManagedReference(value="segment_seating")
-	@OneToMany(mappedBy="hallSegment")
+	
+	@OneToMany(mappedBy="hallSegment", fetch=FetchType.EAGER)
 	public Set<Seating> getSeatingList() {
 		return seatingList;
 	}

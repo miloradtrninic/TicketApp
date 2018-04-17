@@ -31,6 +31,19 @@ public class HallDaoImpl extends AbstractGenericDao<Hall, Integer> implements Ha
 				.add(Restrictions.eq("aud.id", id))
 				.list();
 	}
+
+	@Override
+	public List<Hall> getAllOfMyAuds(String username) throws DaoException {
+		try {
+			return getSessionFactory().getCurrentSession().createCriteria(Hall.class)
+					.createAlias("auditorium", "aud")
+					.createAlias("aud.admin", "ad")
+					.add(Restrictions.eq("ad.username", username))
+					.list();
+		} catch (Exception e) {
+			throw new DaoException(e.getMessage());
+		}
+	}
 	
 
 }

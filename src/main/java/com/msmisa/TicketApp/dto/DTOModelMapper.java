@@ -112,6 +112,7 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 	@SuppressWarnings("unchecked")
 	@javax.transaction.Transactional
 	public void resolveForeign(@NotNull Object dto, @NotNull Object mapped) {
+		logger.info("resolve foreigns");
 		List<Field> allDTOFields = getAllFields(new ArrayList<Field>(),dto.getClass());
 		logger.info("resolve foreigns size: " + allDTOFields.size());
 		for (Field field : allDTOFields) {
@@ -166,7 +167,8 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
 						logger.info("checking if field " + fieldMapped.getName() + " matches " + fkAnn.clazzFK());
 						if(typeMapped.equals(fkAnn.clazzFK())) {
 							logger.info("same class " + typeMapped.getTypeName());
-							logger.info("setting values for mapped field " + fieldMapped.getName() + " value " + value);
+							logger.info("setting values for mapped field " + fieldMapped.getName());
+							logger.info("value set is " + value);
 							fieldMapped.setAccessible(true);
 							fieldMapped.set(mapped, value);
 							break;
