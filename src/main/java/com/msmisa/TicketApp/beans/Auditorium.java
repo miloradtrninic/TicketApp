@@ -76,8 +76,7 @@ public abstract class Auditorium {
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
 	}
-	@OneToOne
-	@JoinColumn(name="FANZONE_ID", nullable=true)
+	@OneToOne(mappedBy="auditorium")
 	public FanZone getFanZone() {
 		return fanZone;
 	}

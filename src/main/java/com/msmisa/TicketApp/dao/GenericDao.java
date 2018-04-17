@@ -18,5 +18,6 @@ public interface GenericDao<Entity,Key>  {
 	List<Entity> getAllIn(List<Key> keys) throws DaoException;
 	
 	void delete(Key entity) throws DaoException;
-
+	
+	void initialize(Object proxy) throws DaoException;
 }

@@ -7,9 +7,11 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -39,8 +41,9 @@ public class FanZone {
 	}
 	
 	@ManyToMany
-	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinColumn(name="ADMIN_ID", nullable=false)
+	@JoinTable(name="FANZONE_ADMINS",
+			joinColumns=@JoinColumn(name="FANZONE_ID", referencedColumnName="ID"),
+			inverseJoinColumns=@JoinColumn(name="USER_ID", referencedColumnName="ID"))
 	public Set<User> getAdmin() {
 		return admin;
 	}
@@ -48,7 +51,7 @@ public class FanZone {
 		this.admin = admin;
 	}
 	
-	@OneToMany(mappedBy="fanzone")
+	@OneToMany(mappedBy="fanzone", fetch=FetchType.EAGER, orphanRemoval=true)
 	@JsonManagedReference(value="zone_item")
 	@Cascade(value=CascadeType.ALL)
 	public Set<FanItem> getFanitemList() {
@@ -58,7 +61,8 @@ public class FanZone {
 		this.fanitemList = fanitemList;
 	}
 	
-	@OneToOne(mappedBy="fanZone")
+	@OneToOne(optional=false)
+	@JoinColumn(name="AUDITORIUM_ID", nullable=false, unique=true)
 	public Auditorium getAuditorium() {
 		return auditorium;
 	}

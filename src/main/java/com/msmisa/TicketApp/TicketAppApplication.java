@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.msmisa.TicketApp.beans.Hall;
@@ -44,6 +47,9 @@ public class TicketAppApplication {
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
 
+    @Autowired
+    private DataSource dataSource;
+	
 	@Bean
 	public SessionFactory getSessionFactory() {
 	    if (entityManagerFactory.unwrap(SessionFactory.class) == null) {
@@ -57,6 +63,16 @@ public class TicketAppApplication {
 	    }
 	    return sessionFactory;
 	}
+
+
+
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager() {
+        JpaTransactionManager tm = new JpaTransactionManager();
+        tm.setEntityManagerFactory(entityManagerFactory);
+        tm.setDataSource(dataSource);
+        return tm;
+    }
 	
 	@Bean
 	public ModelMapper getModelMapper() {

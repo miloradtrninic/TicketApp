@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -128,7 +129,14 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 			throw new DaoException(e.getMessage());
 		}
 	}
-
+	@Override
+	public void initialize(Object proxy) throws DaoException {
+		try {
+			Hibernate.initialize(proxy);
+		} catch(HibernateException e) {
+			throw new DaoException(e.getMessage());
+		}
+	}
 	private Entity saveOrUpdate(Entity entity) {
 		try {
 			sessionFactory.getCurrentSession().saveOrUpdate(entity);

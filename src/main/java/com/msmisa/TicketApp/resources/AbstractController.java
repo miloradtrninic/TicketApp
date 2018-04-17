@@ -1,5 +1,6 @@
 package com.msmisa.TicketApp.resources;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
@@ -29,7 +30,7 @@ public abstract class AbstractController<Entity, Key> {
 		return modelMapper.map(source, to);
 	}
 	
-	protected <E> List<E> convertToDto(List<Entity> source, Class<E> to) {
+	protected <E> List<E> convertToDto(Collection<Entity> source, Class<E> to) {
 		return source.stream().map(e -> convertToDto(e, to)).collect(Collectors.toList());
 	}
 	
