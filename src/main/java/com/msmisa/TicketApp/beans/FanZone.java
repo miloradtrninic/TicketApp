@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Table(name="FANZONES")
 public class FanZone {
 	private Integer id;
-	private User admin;
+	private Set<User> admin;
 	private Auditorium auditorium;
 	private Set<FanItem> fanitemList;
 	
@@ -37,13 +38,13 @@ public class FanZone {
 		this.id = id;
 	}
 	
-	@OneToOne
-	@Cascade(CascadeType.ALL)
+	@ManyToMany
+	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name="ADMIN_ID", nullable=false)
-	public User getAdmin() {
+	public Set<User> getAdmin() {
 		return admin;
 	}
-	public void setAdmin(User admin) {
+	public void setAdmin(Set<User> admin) {
 		this.admin = admin;
 	}
 	
