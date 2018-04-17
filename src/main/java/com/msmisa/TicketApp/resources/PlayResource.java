@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.msmisa.TicketApp.beans.Play;
+import com.msmisa.TicketApp.dao.projection.PlayDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.PlayCreationDTO;
 import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
@@ -38,7 +39,12 @@ public class PlayResource extends AbstractController<Play, Integer>{
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public PlayPreviewDTO addNew(@DTO(value=PlayCreationDTO.class) Play play) {
-		return convertToDto(getDao().insert(play), PlayPreviewDTO.class);
+		play.setId(null);
+		play.getActors().forEach(act -> logger.info(act.getId() + act.getName() + act.getLastName()));
+		logger.info("Director " + play.getDirector().getName());
+		play.getGenres().forEach(gen -> logger.info(gen.getId() + gen.getName()));
+		PlayDao playDao = (PlayDao) getDao();
+		return convertToDto(playDao.insert(play), PlayPreviewDTO.class);
 	}
 	
 	
