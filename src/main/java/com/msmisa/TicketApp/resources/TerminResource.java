@@ -52,9 +52,8 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 	@PostMapping(value="/new",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public TerminPreviewDTO addNew(@DTO(TerminCreationDTO.class) Termin termin) {
-		termin.setId(null);
-		return convertToDto(termin, TerminPreviewDTO.class);
+	public ResponseEntity<?> addNew(@DTO(TerminCreationDTO.class) Termin termin) {
+		return new ResponseEntity<TerminPreviewDTO>(convertToDto(getDao().insert(termin), TerminPreviewDTO.class), HttpStatus.OK);
 	}
 
 

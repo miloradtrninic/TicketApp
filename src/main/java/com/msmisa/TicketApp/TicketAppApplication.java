@@ -60,9 +60,11 @@ public class TicketAppApplication {
 			@Override
 			public TerminPreviewDTO convert(MappingContext<Termin, TerminPreviewDTO> context) {
 				TerminPreviewDTO dto = new TerminPreviewDTO();
+				logger.info("converting termin");
+				logger.info("id is " + context.getSource().getId());
 				dto.setId(context.getSource().getId());
 				dto.setPrice(context.getSource().getPrice());
-				logger.info("converting termin");
+				
 				logger.info(context.getSource().getHallList().size());
 				context.getSource().getHallList().forEach(h -> logger.info(h.getName()));
 				dto.setHallListNames(context.getSource().getHallList().stream().map(h -> h.getName()).collect(Collectors.toList()));
