@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class TerminPreviewDTO {
 	private Integer id;
-	private List<String> hallListNames;
+	private List<String> hallNames;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date date;
 	private Integer price;
@@ -19,13 +19,13 @@ public class TerminPreviewDTO {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public List<String> getHallListNames() {
-		return hallListNames;
+
+	public List<String> getHallNames() {
+		return hallNames;
 	}
-	public void setHallListNames(List<String> hallListNames) {
-		this.hallListNames = hallListNames;
+	public void setHallNames(List<String> hallNames) {
+		this.hallNames = hallNames;
 	}
-	
 	public Date getDate() {
 		return date;
 	}

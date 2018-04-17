@@ -59,8 +59,9 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 
 
 	@GetMapping(value="{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public TerminPreviewDTO getId (@PathVariable(value="id") Integer id) {
-		return convertToDto(getDao().get(id), TerminPreviewDTO.class);
+	public ResponseEntity<?> getId (@PathVariable(value="id") Integer id) {
+		TerminPreviewDTO tp = modelMapper.map(getDao().get(id), TerminPreviewDTO.class);
+		return new ResponseEntity<TerminPreviewDTO>(tp, HttpStatus.OK);
 	}
 	
 	

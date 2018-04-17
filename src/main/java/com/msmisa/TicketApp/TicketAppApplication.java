@@ -1,4 +1,5 @@
 package com.msmisa.TicketApp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.collection.spi.PersistentCollection;
+import org.modelmapper.Condition;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -17,10 +20,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.msmisa.TicketApp.beans.Hall;
 import com.msmisa.TicketApp.beans.Projection;
 import com.msmisa.TicketApp.beans.Termin;
 import com.msmisa.TicketApp.dto.preview.DirectorPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.GenrePreviewDTO;
+import com.msmisa.TicketApp.dto.preview.HallPreviewDTO;
+import com.msmisa.TicketApp.dto.preview.HallSegmentPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.ProjectionPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TerminPreviewDTO;
 
@@ -55,7 +61,26 @@ public class TicketAppApplication {
 	@Bean
 	public ModelMapper getModelMapper() {
 		ModelMapper mm = new ModelMapper();
-		mm.createTypeMap(Termin.class, TerminPreviewDTO.class).setPostConverter(new Converter<Termin, TerminPreviewDTO>() {
+		mm.createTypeMap(Hall.class, HallPreviewDTO.class).setPostConverter(new Converter<Hall, HallPreviewDTO>() {
+			
+			@Override
+			public HallPreviewDTO convert(MappingContext<Hall, HallPreviewDTO> context) {
+				HallPreviewDTO dto = new HallPreviewDTO();
+				logger.info("converting hall");
+				dto.setId(context.getSource().getId());
+				dto.setName(context.getSource().getName());
+				dto.setAuditoriumName(context.getSource().getAuditorium().getName());
+				List<HallSegmentPreviewDTO> segments = dto.getHallSegmentList()
+						.stream()
+						.map(e -> mm.map(e, HallSegmentPreviewDTO.class))
+						.collect(Collectors.toList());
+				dto.setHallSegmentList(segments);
+				return dto;
+			}
+		});
+		
+		
+		mm.createTypeMap(Termin.class, TerminPreviewDTO.class).setPreConverter(new Converter<Termin, TerminPreviewDTO>() {
 			
 			@Override
 			public TerminPreviewDTO convert(MappingContext<Termin, TerminPreviewDTO> context) {
@@ -67,10 +92,14 @@ public class TicketAppApplication {
 				
 				logger.info(context.getSource().getHallList().size());
 				context.getSource().getHallList().forEach(h -> logger.info(h.getName()));
-				dto.setHallListNames(context.getSource().getHallList().stream().map(h -> h.getName()).collect(Collectors.toList()));
+				List<String> halls = context.getSource().getHallList().stream().map(h -> h.getName()).collect(Collectors.toList());
+				
+				dto.setHallNames(halls);
+				logger.info("halls : " + dto.getHallNames());
 				return dto;
 			}
 		});
+		
 		mm.createTypeMap(Projection.class, ProjectionPreviewDTO.class).setPostConverter(new Converter<Projection, ProjectionPreviewDTO>() {
 			@Override
 			public ProjectionPreviewDTO convert(MappingContext<Projection, ProjectionPreviewDTO> context) {
