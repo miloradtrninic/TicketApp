@@ -1,10 +1,11 @@
 package com.msmisa.TicketApp.beans;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,9 +14,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 @Entity
@@ -26,8 +26,8 @@ public class Termin {
 	
 	private Projection projection;
 	private Set<Hall> hallList;
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-	private String time;
 	private Integer price;
 	
 	
@@ -40,16 +40,17 @@ public class Termin {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@ManyToOne(optional=false)
+	@ManyToOne(optional=false, fetch=FetchType.LAZY)
 	public Projection getProjection() {
 		return projection;
 	}
 	public void setProjection(Projection projection) {
 		this.projection = projection;
 	}
-	@ManyToMany
-	@Cascade(value=CascadeType.ALL)
-	@JoinTable(name="HALLS_TERMIN", joinColumns=@JoinColumn(name="PROJECTION_ID"), inverseJoinColumns=@JoinColumn(name="HALL_ID"))
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name="TERMIN_HALLS",
+			joinColumns=@JoinColumn(name="TERMIN_ID", referencedColumnName="TERMIN_ID"),
+			inverseJoinColumns=@JoinColumn(name="HALL_ID", referencedColumnName="ID"))
 	public Set<Hall> getHallList() {
 		return hallList;
 	}
@@ -62,12 +63,6 @@ public class Termin {
 	}
 	public void setDate(Date date) {
 		this.date = date;
-	}
-	public String getTime() {
-		return time;
-	}
-	public void setTime(String time) {
-		this.time = time;
 	}
 	public Integer getPrice() {
 		return price;

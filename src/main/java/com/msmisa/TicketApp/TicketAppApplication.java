@@ -1,8 +1,11 @@
 package com.msmisa.TicketApp;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.modelmapper.Converter;
@@ -14,12 +17,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.msmisa.TicketApp.beans.Movie;
 import com.msmisa.TicketApp.beans.Projection;
 import com.msmisa.TicketApp.beans.Termin;
 import com.msmisa.TicketApp.dto.preview.DirectorPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.GenrePreviewDTO;
-import com.msmisa.TicketApp.dto.preview.MoviePreviewDTO;
 import com.msmisa.TicketApp.dto.preview.ProjectionPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TerminPreviewDTO;
 
@@ -33,7 +34,7 @@ public class TicketAppApplication {
 		
 		SpringApplication.run(TicketAppApplication.class, args);
 	}
-	
+	protected final Log logger = LogFactory.getLog(getClass());
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
 
@@ -61,7 +62,9 @@ public class TicketAppApplication {
 				TerminPreviewDTO dto = new TerminPreviewDTO();
 				dto.setId(context.getSource().getId());
 				dto.setPrice(context.getSource().getPrice());
-				dto.setTime(context.getSource().getTime());
+				logger.info("converting termin");
+				logger.info(context.getSource().getHallList().size());
+				context.getSource().getHallList().forEach(h -> logger.info(h.getName()));
 				dto.setHallListNames(context.getSource().getHallList().stream().map(h -> h.getName()).collect(Collectors.toList()));
 				return dto;
 			}

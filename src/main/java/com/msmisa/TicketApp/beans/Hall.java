@@ -46,7 +46,7 @@ public class Hall {
 	public void setName(String name) {
 		this.name = name;
 	}
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	public Auditorium getAuditorium() {
 		return auditorium;
 	}

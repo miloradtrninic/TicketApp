@@ -1,19 +1,27 @@
 package com.msmisa.TicketApp.resources;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msmisa.TicketApp.beans.Hall;
+import com.msmisa.TicketApp.beans.Projection;
 import com.msmisa.TicketApp.beans.Termin;
 import com.msmisa.TicketApp.beans.Theatre;
+import com.msmisa.TicketApp.dao.hall.HallDao;
+import com.msmisa.TicketApp.dao.projection.ProjectionDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.TerminCreationDTO;
 import com.msmisa.TicketApp.dto.creation.TheatreCreationDTO;
@@ -24,6 +32,12 @@ import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
 @RequestMapping(value="/termin")
 public class TerminResource extends AbstractController<Termin, Integer>{
 
+	@Autowired
+	ProjectionDao projectionDao;
+	@Autowired
+	HallDao hallDao;
+	
+	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TerminPreviewDTO>> getAll(){
 		List<Termin> list = getDao().getAll();
@@ -38,8 +52,9 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 	@PostMapping(value="/new",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public TerminPreviewDTO addNew(@DTO(value=TerminCreationDTO.class) Termin termin) {
-		return convertToDto(getDao().insert(termin), TerminPreviewDTO.class);
+	public TerminPreviewDTO addNew(@DTO(TerminCreationDTO.class) Termin termin) {
+		termin.setId(null);
+		return convertToDto(termin, TerminPreviewDTO.class);
 	}
 
 
