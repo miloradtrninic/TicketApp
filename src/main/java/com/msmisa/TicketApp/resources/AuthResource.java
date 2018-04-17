@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,8 +115,7 @@ public class AuthResource {
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 					final UserDetails userDetails = myAppUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 					final String token = jwtTokenUtil.generateToken(userDetails);
-					List<String> roles = new ArrayList<String>();
-					user.getUserRoles().stream().map(r -> roles.add(r.getName()));
+					List<String> roles = user.getUserRoles().stream().map(r -> r.getName()).collect(Collectors.toList());
 
 					return ResponseEntity.ok(new JwtAuthenticationResponse(user.getId(), token, roles, getUserPrivilegeNames(user)));
 				} else {
