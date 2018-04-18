@@ -84,8 +84,8 @@ public abstract class Auditorium {
 		this.fanZone = fanZone;
 	}
 	@ManyToMany
-	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinTable(name="AUDITORIUM_ADMIN", joinColumns=@JoinColumn(name="AUDITORIUM_ID"), inverseJoinColumns=@JoinColumn(name="ADMIN_ID"))
+	@JoinTable(name="AUDITORIUM_ADMIN", joinColumns=@JoinColumn(name="AUDITORIUM_ID", referencedColumnName="ID"),
+										inverseJoinColumns=@JoinColumn(name="ADMIN_ID", referencedColumnName="ID"))
 	public Set<User> getAdmin() {
 		return admin;
 	}

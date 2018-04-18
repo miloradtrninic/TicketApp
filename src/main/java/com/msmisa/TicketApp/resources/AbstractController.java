@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.msmisa.TicketApp.dao.DaoException;
 import com.msmisa.TicketApp.dao.GenericDao;
 
 public abstract class AbstractController<Entity, Key> {
@@ -43,8 +44,12 @@ public abstract class AbstractController<Entity, Key> {
 	@RequestMapping(value="/delete/{id}",
 			method=RequestMethod.DELETE)
 	public ResponseEntity<?> delete(@PathVariable(value="id") Key id){
-		Entity ent = dao.get(id);
-		dao.delete(id);
+		//Entity ent = dao.get(id);
+		try {
+			dao.delete(id);
+		} catch(DaoException e) {
+			e.printStackTrace();
+		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

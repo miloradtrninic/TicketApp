@@ -36,7 +36,6 @@ import com.msmisa.TicketApp.beans.movie.Genre;
 public abstract class Projection {
 	private Integer id;
 	private String name;
-	private List<FanItem> fanItemList;
 	private Integer ratings;
 	private Set<Actor> actors;
 	private Set<Genre> genres;
@@ -64,14 +63,6 @@ public abstract class Projection {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	@OneToMany(mappedBy="projection", fetch=FetchType.EAGER)
-	@JsonIgnore
-	public List<FanItem> getFanItemList() {
-		return fanItemList;
-	}
-	public void setFanItemList(List<FanItem> fanItemList) {
-		this.fanItemList = fanItemList;
 	}
 	public Integer getRatings() {
 		return ratings;

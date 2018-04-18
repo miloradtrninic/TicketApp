@@ -52,7 +52,11 @@ public class FanZoneResource extends AbstractController<FanZone, Integer> {
 		FanZone newZone = getDao().insert(fanZone);
 		return new ResponseEntity<>(convertToDto(newZone, FanZonePreviewDTO.class), HttpStatus.OK);
 	}
-	
+	@GetMapping(value="{itemId}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<FanZonePreviewDTO> getOne(@PathVariable("itemId") Integer id) {
+		FanZone zone = getDao().get(id);
+		return new ResponseEntity<FanZonePreviewDTO>(convertToDto(zone, FanZonePreviewDTO.class), HttpStatus.OK);
+	}
 	@GetMapping(value="/{id}/admins")
 	public ResponseEntity<List<UserPreviewDTO>> getAdmins(@PathVariable("id") Integer id) {
 		Set<User> admins = ((FanZoneDao)getDao()).getAdmins(id);

@@ -62,6 +62,7 @@ public class HallSegment {
 	}
 	
 	@OneToMany(mappedBy="hallSegment", fetch=FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
 	public Set<Seating> getSeatingList() {
 		return seatingList;
 	}

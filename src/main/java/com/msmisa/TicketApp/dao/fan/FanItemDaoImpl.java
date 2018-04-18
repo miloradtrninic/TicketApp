@@ -2,6 +2,7 @@ package com.msmisa.TicketApp.dao.fan;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.msmisa.TicketApp.beans.FanItem;
+import com.msmisa.TicketApp.beans.User;
 import com.msmisa.TicketApp.dao.AbstractGenericDao;
 import com.msmisa.TicketApp.dao.DaoException;
 
@@ -35,6 +37,27 @@ public class FanItemDaoImpl extends AbstractGenericDao<FanItem, Integer> impleme
 		} catch (HibernateException e) {
 			throw new DaoException(e.getMessage());
 		}
+	}
+
+	@Override
+	public FanItem reserve(String username, Integer id) throws DaoException {
+		try {
+			List<User> users = getSessionFactory()
+						.getCurrentSession()
+						.createCriteria(User.class)
+						.add(Restrictions.eq("username", username))
+						.setMaxResults(1)
+						.list();
+			User user = users.get(0);
+			FanItem item = get(id);
+			Hibernate.initialize(user.getFanItems());
+			user.getFanItems().add(item);
+			getSessionFactory().getCurrentSession().saveOrUpdate(user);
+			return item;
+		} catch (HibernateException e) {
+			throw new DaoException(e.getMessage());
+		}
+
 	}
 
 }

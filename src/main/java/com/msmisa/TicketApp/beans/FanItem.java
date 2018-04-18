@@ -19,7 +19,6 @@ public class FanItem {
 	private String name;
 	private String imagePath;
 	private String description;
-	private Projection projection;
 	private FanZone fanzone;
 	
 	@Id
@@ -32,16 +31,7 @@ public class FanItem {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@ManyToOne
-	@JoinColumn(name="PROJECTION_ID", nullable=false)
-	public Projection getProjection() {
-		return projection;
-	}
-
-	public void setProjection(Projection projection) {
-		this.projection = projection;
-	}
-	@JsonBackReference(value="zone_item")
+	
 	@ManyToOne
 	@JoinColumn(name="FANZONE_ID", nullable=true)
 	public FanZone getFanzone() {

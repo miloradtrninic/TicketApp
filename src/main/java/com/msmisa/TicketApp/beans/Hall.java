@@ -46,16 +46,15 @@ public class Hall {
 	public void setName(String name) {
 		this.name = name;
 	}
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	public Auditorium getAuditorium() {
 		return auditorium;
 	}
 	public void setAuditorium(Auditorium auditorium) {
 		this.auditorium = auditorium;
 	}
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER)
+	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="hall")
 	@Cascade(value=CascadeType.ALL)
-	@JoinColumn(name = "hall_id")
 	public Set<HallSegment> getHallSegmentList() {
 		return hallSegmentList;
 	}

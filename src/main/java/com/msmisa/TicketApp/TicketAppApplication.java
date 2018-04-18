@@ -86,7 +86,7 @@ public class TicketAppApplication {
 				dto.setId(context.getSource().getId());
 				dto.setName(context.getSource().getName());
 				dto.setAuditoriumName(context.getSource().getAuditorium().getName());
-				List<HallSegmentPreviewDTO> segments = dto.getHallSegmentList()
+				List<HallSegmentPreviewDTO> segments = context.getSource().getHallSegmentList()
 						.stream()
 						.map(e -> mm.map(e, HallSegmentPreviewDTO.class))
 						.collect(Collectors.toList());

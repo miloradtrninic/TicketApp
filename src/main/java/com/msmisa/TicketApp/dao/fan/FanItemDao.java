@@ -8,4 +8,5 @@ import com.msmisa.TicketApp.dao.GenericDao;
 
 public interface FanItemDao extends GenericDao<FanItem, Integer> {
 	List<FanItem> getByZone(Integer zoneID) throws DaoException;
+	FanItem reserve(String username, Integer id) throws DaoException;
 }

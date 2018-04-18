@@ -44,7 +44,6 @@ public class Seating {
 		this.number = number;
 	}
 	@ManyToOne
-	@JsonBackReference(value="segment_seating")
 	@JoinColumn(name="HALLSEGMENT_ID", nullable=false)
 	public HallSegment getHallSegment() {
 		return hallSegment;
