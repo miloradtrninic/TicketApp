@@ -21,40 +21,38 @@ public abstract class AbstractController<Entity, Key> {
 
 	@Autowired
 	private GenericDao<Entity, Key> dao;
-	
+
 	@Autowired
 	protected ModelMapper modelMapper;
-	
+
 	protected final Log logger = LogFactory.getLog(getClass());
-	
+
 	protected <E> E convertToDto(Entity source, Class<E> to) {
 		return modelMapper.map(source, to);
 	}
-	
+
 	protected <E> List<E> convertToDto(Collection<Entity> source, Class<E> to) {
 		return source.stream().map(e -> convertToDto(e, to)).collect(Collectors.toList());
 	}
-	
+
 	protected GenericDao<Entity, Key> getDao() {
 		return dao;
 	}
 
 
-
 	@RequestMapping(value="/delete/{id}",
 			method=RequestMethod.DELETE)
 	public ResponseEntity<?> delete(@PathVariable(value="id") Key id){
-		//Entity ent = dao.get(id);
 		try {
+			Entity e = dao.get(id);
+			if(e == null) {
+				return new ResponseEntity<String>("Entity doesn't exist.", HttpStatus.NO_CONTENT);
+			}
 			dao.delete(id);
+			return new ResponseEntity<String>("Success deleting entity", HttpStatus.OK);
 		} catch(DaoException e) {
 			e.printStackTrace();
+			return new ResponseEntity<String>("Error deleting entity", HttpStatus.NOT_ACCEPTABLE);
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
-	
-
 }
-
-
