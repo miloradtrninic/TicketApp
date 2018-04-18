@@ -14,16 +14,18 @@ import javax.persistence.SecondaryTable;
 @Entity
 @DiscriminatorValue("theatre")
 public class Theatre extends Auditorium {
-	private Set<Play> plays;
+	private Set<Play>  playsRepertory;
 
 	@OneToMany(mappedBy="theatre")
-	public Set<Play> getPlays() {
-		return plays;
+	public Set<Play> getPlaysRepertory() {
+		return playsRepertory;
 	}
 
-	public void setPlays(Set<Play> plays) {
-		this.plays = plays;
+	public void setPlaysRepertory(Set<Play> playsRepertory) {
+		this.playsRepertory = playsRepertory;
 	}
+
+	
 	
 	
 }

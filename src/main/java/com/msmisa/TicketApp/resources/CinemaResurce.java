@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,8 +64,16 @@ public class CinemaResurce extends AbstractController<Cinema, Integer>{
 	}
 	
 	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Cinema update(@DTO(value=CinemaUpdateDTO.class) Cinema entity){
-		return getDao().update(entity);
+	public CinemaPreviewDTO update(@RequestBody CinemaUpdateDTO entity){
+		logger.info("ovo je id aaaaaaaaaaaaa : " + entity.getId());
+		logger.info("ovo je name aaaaaaaaaaaaa : " + entity.getName());
+		logger.info("ovo je desc aaaaaaaaaaaaa : " + entity.getDescription());
+		Cinema cinema = getDao().get(entity.getId());
+		cinema.setAddress(entity.getAddress());
+		cinema.setDescription(entity.getDescription());
+		cinema.setName(entity.getName());
+		cinema.setRatings(entity.getRatings());
+		return convertToDto(getDao().update(cinema), CinemaPreviewDTO.class);
 	}
 	
 }

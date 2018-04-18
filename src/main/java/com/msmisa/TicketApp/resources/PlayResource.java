@@ -3,6 +3,7 @@ package com.msmisa.TicketApp.resources;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +14,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.msmisa.TicketApp.beans.Play;
+import com.msmisa.TicketApp.dao.auditorium.TheatreDao;
 import com.msmisa.TicketApp.dao.projection.PlayDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.PlayCreationDTO;
+import com.msmisa.TicketApp.dto.preview.MoviePreviewDTO;
 import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
 import com.msmisa.TicketApp.dto.update.PlayUpdateDTO;
 
 @RestController
 @RequestMapping(value="/play")
 public class PlayResource extends AbstractController<Play, Integer>{
+	
+	@Autowired
+	TheatreDao theatreDao;
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PlayPreviewDTO>> getAll(){
@@ -45,6 +51,13 @@ public class PlayResource extends AbstractController<Play, Integer>{
 		play.getGenres().forEach(gen -> logger.info(gen.getId() + gen.getName()));
 		PlayDao playDao = (PlayDao) getDao();
 		return convertToDto(playDao.insert(play), PlayPreviewDTO.class);
+	}
+	
+	@GetMapping(value="allFromTheatre/{theatreId}")
+	public ResponseEntity<?> allFromTheatre(@PathVariable("theatreId") Integer theatreId) {
+		
+		return new ResponseEntity<List<PlayPreviewDTO>>
+				(convertToDto(theatreDao.getAllPlays(theatreId), PlayPreviewDTO.class), HttpStatus.OK);
 	}
 	
 	
