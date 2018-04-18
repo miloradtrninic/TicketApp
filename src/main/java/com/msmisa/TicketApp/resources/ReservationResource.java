@@ -49,9 +49,6 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	private ReservationDao reservationDao;
 	
 	@Autowired
-	private OptimisticLockingFailureException locking;
-	
-	@Autowired
 	private TicketDao tickDao;
 
 	@GetMapping(value={"getaAll/{id}"}, produces= {"application/json"})
