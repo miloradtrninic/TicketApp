@@ -8,7 +8,7 @@ public class ReservationCreationDTO {
 	
 	private Integer id;
 	@ForeignKeyDTO(clazzFK=UserCreationDTO.class)
-	private UserCreationDTO reservedBy;
+	private Integer reservedBy;
 	private List<TicketCreationDTO> ticketList;
 
 	public Integer getId() {
@@ -23,7 +23,7 @@ public class ReservationCreationDTO {
 		return reservedBy;
 	}
 
-	public void setReservedBy(UserCreationDTO reservedBy) {
+	public void setReservedBy(Integer reservedBy) {
 		this.reservedBy = reservedBy;
 	}
 
