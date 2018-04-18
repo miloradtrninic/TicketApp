@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,8 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Cinema extends Auditorium {
 	private Set<Movie> moviesRepertory;
 	
-	@ManyToMany(mappedBy="cinemaList")
-	@JsonIgnore
+	@OneToMany(mappedBy="cinema")
 	public Set<Movie> getMoviesRepertory() {
 		return moviesRepertory;
 	}

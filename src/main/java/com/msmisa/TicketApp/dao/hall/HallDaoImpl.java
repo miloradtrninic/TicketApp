@@ -26,10 +26,17 @@ public class HallDaoImpl extends AbstractGenericDao<Hall, Integer> implements Ha
 	@Override
 	public List<Hall> getByAuditoriumId(Integer id) throws DaoException {
 		// TODO Auto-generated method stub
-		Criteria criteria = getSessionFactory().getCurrentSession().createCriteria(Hall.class);
-		return criteria.createAlias("auditorium", "aud")
-				.add(Restrictions.eq("aud.id", id))
-				.list();
+		try {
+		return getSessionFactory()
+						.getCurrentSession()
+						.createCriteria(Hall.class)
+						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+						.createAlias("auditorium", "aud")
+						.add(Restrictions.eq("aud.id", id))
+						.list();
+		} catch (Exception e) {
+			throw new DaoException(e.getMessage());
+		}
 	}
 
 	@Override

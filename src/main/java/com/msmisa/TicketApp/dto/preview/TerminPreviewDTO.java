@@ -12,6 +12,7 @@ public class TerminPreviewDTO {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date date;
 	private Integer price;
+	private Boolean discount;
 	
 	public Integer getId() {
 		return id;
@@ -38,6 +39,13 @@ public class TerminPreviewDTO {
 	public void setPrice(Integer price) {
 		this.price = price;
 	}
+	public Boolean getDiscount() {
+		return discount;
+	}
+	public void setDiscount(Boolean discount) {
+		this.discount = discount;
+	}
+	
 	
 	
 }

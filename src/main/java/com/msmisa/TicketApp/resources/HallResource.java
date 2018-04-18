@@ -52,12 +52,14 @@ public class HallResource extends AbstractController<Hall, Integer> {
 	@Autowired
 	SeatingDao seatingDao;
 	
-	@GetMapping(value="/byauditorim/{id}", consumes=MediaType.APPLICATION_JSON_UTF8_VALUE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> getByAuditoriumID(@PathParam("id") Integer id) {
+	@GetMapping(value="byauditorim/{idAud}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> getByAuditoriumID(@PathVariable("idAud") Integer id) {
 		HallDao hallDao = (HallDao) getDao();
+		logger.info("id is " + id);
 		List<Hall> hallList = hallDao.getByAuditoriumId(id);
+		logger.info("hallList size is " + hallList.size());
 		List<HallPreviewDTO> hallPreview = convertToDto(hallList, HallPreviewDTO.class);
-		if(hallPreview.isEmpty())
+		if(hallList.isEmpty())
 			return new ResponseEntity<List<HallPreviewDTO>>(hallPreview,HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<List<HallPreviewDTO>>(hallPreview,HttpStatus.OK);
@@ -87,7 +89,7 @@ public class HallResource extends AbstractController<Hall, Integer> {
 	}
 	
 	
-	@PostMapping(value="/new",
+	@PostMapping(value="new",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public HallPreviewDTO addNew(@RequestBody HallCreationDTO hall) {

@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
@@ -17,18 +18,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("movie")
 public class Movie extends Projection {
-	private Set<Cinema> cinemaList;
-
-	@ManyToMany
-	@JoinTable(name="CINEMA_MOVIE", joinColumns=@JoinColumn(name="MOVIE_ID", nullable=false), inverseJoinColumns=@JoinColumn(name="CINEMA_ID", nullable=false))
-	@JsonIgnore
-	public Set<Cinema> getCinemaList() {
-		return cinemaList;
+	private Cinema cinema;
+	@ManyToOne
+	public Cinema getCinema() {
+		return cinema;
 	}
 
-	public void setCinemaList(Set<Cinema> cinemaList) {
-		this.cinemaList = cinemaList;
+	public void setCinema(Cinema cinema) {
+		this.cinema = cinema;
 	}
+
+	
+	
 	
 	
 }

@@ -32,6 +32,7 @@ public class Termin {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	private Integer price;
+	private Boolean discount;
 	
 	
 	@Id
@@ -72,6 +73,12 @@ public class Termin {
 	}
 	public void setPrice(Integer price) {
 		this.price = price;
+	}
+	public Boolean getDiscount() {
+		return discount;
+	}
+	public void setDiscount(Boolean discount) {
+		this.discount = discount;
 	}
 	
 	

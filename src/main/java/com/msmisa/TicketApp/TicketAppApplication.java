@@ -109,7 +109,7 @@ public class TicketAppApplication {
 				logger.info(context.getSource().getHallList().size());
 				context.getSource().getHallList().forEach(h -> logger.info(h.getName()));
 				List<String> halls = context.getSource().getHallList().stream().map(h -> h.getName()).collect(Collectors.toList());
-				
+				dto.setDiscount(context.getSource().getDiscount());
 				dto.setHallNames(halls);
 				logger.info("halls : " + dto.getHallNames());
 				return dto;

@@ -8,20 +8,21 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SecondaryTable;
 
 @Entity
 @SecondaryTable(name="PLAYS")
 public class Play extends Projection {
-	private List<Theatre> theatre;
+	private Theatre theatre;
 
-	@ManyToMany
-	@JoinTable(name="THEATRE_PLAYS", joinColumns=@JoinColumn(name="PLAY_ID"), inverseJoinColumns=@JoinColumn(name="THEATRE_ID"))
-	public List<Theatre> getTheatre() {
+	@ManyToOne
+	@JoinColumn(name="THEATRE_ID")
+	public Theatre getTheatre() {
 		return theatre;
 	}
 
-	public void setTheatre(List<Theatre> theatre) {
+	public void setTheatre(Theatre theatre) {
 		this.theatre = theatre;
 	}
 	

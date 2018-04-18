@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 
@@ -15,7 +16,7 @@ import javax.persistence.SecondaryTable;
 public class Theatre extends Auditorium {
 	private Set<Play> plays;
 
-	@ManyToMany(mappedBy="theatre")
+	@OneToMany(mappedBy="theatre")
 	public Set<Play> getPlays() {
 		return plays;
 	}
