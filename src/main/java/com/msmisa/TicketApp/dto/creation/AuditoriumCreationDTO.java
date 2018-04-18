@@ -5,6 +5,7 @@ public class AuditoriumCreationDTO {
 	private String name;
 	private String address;
 	private String description;
+	private String type;
 	private Integer ratings;
 	
 	public String getName() {
@@ -31,6 +32,10 @@ public class AuditoriumCreationDTO {
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
 	}
-	
-	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 }

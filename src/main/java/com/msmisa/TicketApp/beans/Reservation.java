@@ -12,10 +12,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.OptimisticLocking;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name="RESERVATIONS")
+@OptimisticLocking
 public class Reservation {
 	private Integer id;
 	private User reservedBy;

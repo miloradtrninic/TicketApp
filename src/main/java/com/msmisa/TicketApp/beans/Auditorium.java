@@ -20,6 +20,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -33,6 +34,7 @@ public abstract class Auditorium {
 	private String description;
 	private Integer ratings;
 	private FanZone fanZone;
+	private String type;
 	
 	private Set<Hall> hallList;
 	
@@ -86,6 +88,10 @@ public abstract class Auditorium {
 	}
 	public void setHallList(Set<Hall> hallList) {
 		this.hallList = hallList;
+	}
+	@Column(name="entity_type", nullable=false)
+	public String getType() {
+		return type;
 	}
 	
 	
