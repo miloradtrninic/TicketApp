@@ -1,14 +1,24 @@
 package com.msmisa.TicketApp.dto.update;
 
+import javax.persistence.Id;
+
 public class AuditoriumUpdateDTO {
 
-	
+	@Id
+	private Integer id;
 	private String name;
 	private String address;
 	private String description;
 	private Integer ratings;
 	
 	
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}

@@ -10,13 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msmisa.TicketApp.beans.Cinema;
 import com.msmisa.TicketApp.beans.Theatre;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.TheatreCreationDTO;
+import com.msmisa.TicketApp.dto.preview.CinemaPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
+import com.msmisa.TicketApp.dto.update.CinemaUpdateDTO;
 import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
 
 @RestController
@@ -46,5 +50,18 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 	@GetMapping(value="{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public TheatrePreviewDTO getId (@PathVariable(value="id") Integer id) {
 		return convertToDto(getDao().get(id), TheatrePreviewDTO.class);
+	}
+	
+	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public TheatrePreviewDTO update(@RequestBody TheatreUpdateDTO entity){
+		logger.info("ovo je id aaaaaaaaaaaaa : " + entity.getId());
+		logger.info("ovo je id aaaaaaaaaaaaa : " + entity.getName());
+		logger.info("ovo je id aaaaaaaaaaaaa : " + entity.getDescription());
+		Theatre theatre = getDao().get(entity.getId());
+		theatre.setAddress(entity.getAddress());
+		theatre.setDescription(entity.getDescription());
+		theatre.setName(entity.getName());
+		theatre.setRatings(entity.getRatings());
+		return convertToDto(getDao().update(theatre), TheatrePreviewDTO.class);
 	}
 }
