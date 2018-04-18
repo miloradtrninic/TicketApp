@@ -5,6 +5,8 @@ public class SeatingPreviewDTO {
 	private Integer row;
 	private Integer number;
 	private Boolean reserved;
+	private HallSegmentPreviewDTO hallSegment;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -28,6 +30,12 @@ public class SeatingPreviewDTO {
 	}
 	public void setReserved(Boolean reserved) {
 		this.reserved = reserved;
+	}
+	public HallSegmentPreviewDTO getHallSegment() {
+		return hallSegment;
+	}
+	public void setHallSegment(HallSegmentPreviewDTO hallSegment) {
+		this.hallSegment = hallSegment;
 	}
 	
 	

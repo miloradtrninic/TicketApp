@@ -5,6 +5,7 @@ public class AuditoriumPreviewDTO {
 	private String name;
 	private String address;
 	private String description;
+	private String type;
 	private Integer ratings;
 	
 	public Integer getId() {
@@ -36,6 +37,12 @@ public class AuditoriumPreviewDTO {
 	}
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

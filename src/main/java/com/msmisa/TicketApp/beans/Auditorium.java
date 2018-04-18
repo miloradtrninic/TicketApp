@@ -39,6 +39,7 @@ public abstract class Auditorium {
 	private Integer ratings;
 	private FanZone fanZone;
 	private Set<User> admin;
+	private String type;
 	
 	public Auditorium() {
 	}
@@ -91,6 +92,14 @@ public abstract class Auditorium {
 	}
 	public void setAdmin(Set<User> admin) {
 		this.admin = admin;
+	}
+	@Column(name="entityType", nullable=false)
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

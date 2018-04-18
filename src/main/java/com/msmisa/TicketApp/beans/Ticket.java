@@ -9,12 +9,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.OptimisticLocking;
+import org.springframework.data.annotation.Version;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 
 
 @Entity
 @Table(name="TICKETS")
+@OptimisticLocking
 public class Ticket {
 	private Projection projection;
 	private Integer id;
@@ -23,7 +29,9 @@ public class Ticket {
 	private Double price;
 	private Integer discount;
 	private Boolean quickReservation;
-	
+	@Version
+	@NotNull
+	private Integer version;
 	
 	
 	@Id
@@ -74,6 +82,12 @@ public class Ticket {
 	}
 	public void setQuickReservation(Boolean quickReservation) {
 		this.quickReservation = quickReservation;
+	}
+	public Integer getVersion() {
+		return version;
+	}
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 	
 	

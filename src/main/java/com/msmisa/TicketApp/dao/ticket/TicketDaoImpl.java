@@ -1,6 +1,9 @@
 package com.msmisa.TicketApp.dao.ticket;
 
+import org.hibernate.LockMode;
+import org.hibernate.OptimisticLockException;
 import org.hibernate.SessionFactory;
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,4 +21,18 @@ public class TicketDaoImpl extends AbstractGenericDao<Ticket, Integer> implement
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	@Override
+	public Ticket update(Ticket ticket) {
+		try {
+			SessionFactory sf = getSessionFactory();
+			Ticket t = sf.getCurrentSession().get(Ticket.class, ticket.getId());
+			sf.getCurrentSession().lock(t, LockMode.OPTIMISTIC);
+			sf.getCurrentSession().saveOrUpdate(ticket);
+			return t;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
