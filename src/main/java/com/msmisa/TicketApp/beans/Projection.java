@@ -1,3 +1,4 @@
+
 package com.msmisa.TicketApp.beans;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -43,10 +44,10 @@ public abstract class Projection {
 	private Integer durationMinutes;
 	private String coverPath;
 	private String description;
-
+	
 	private Set<Termin> projectionTime;
 	private Set<Ticket> ticketList;
-	
+	private Set<WatchedProjection> watchedBy;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -130,8 +131,14 @@ public abstract class Projection {
 	public void setTicketList(Set<Ticket> ticketList) {
 		this.ticketList = ticketList;
 	}
+	@OneToMany(mappedBy="pk.projection", orphanRemoval=true)
+	public Set<WatchedProjection> getWatchedBy() {
+		return watchedBy;
+	}
+	public void setWatchedBy(Set<WatchedProjection> watchedBy) {
+		this.watchedBy = watchedBy;
+	}
 	
 	
 	
-
 }

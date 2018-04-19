@@ -48,6 +48,7 @@ public class User {
 	private Set<Bid> bidList;
 	private Set<UserRole> userRoles;
 	private Set<FanItem> fanItems;
+	private Set<WatchedProjection> watchedProjections;
 	private Membership membership;
 	
 	
@@ -184,6 +185,14 @@ public class User {
 	@JoinColumn(name="MEMBERSHIP_TYPE", nullable=false)
 	public Membership getMembership() {
 		return membership;
+	}
+	
+	@OneToMany(mappedBy="pk.user", orphanRemoval=true)
+	public Set<WatchedProjection> getWatchedProjections() {
+		return watchedProjections;
+	}
+	public void setWatchedProjections(Set<WatchedProjection> watchedProjections) {
+		this.watchedProjections = watchedProjections;
 	}
 	public void setMembership(Membership membership) {
 		this.membership = membership;

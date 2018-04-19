@@ -74,4 +74,6 @@ public class UserDaoImpl extends AbstractGenericDao<User, Integer> implements Us
 		
 		return null;
 	}
+	
 }
+
