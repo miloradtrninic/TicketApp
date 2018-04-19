@@ -5,6 +5,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.websocket.server.PathParam;
 
@@ -121,16 +123,31 @@ public class HallResource extends AbstractController<Hall, Integer> {
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public HallPreviewDTO update(@RequestBody HallUpdateDTO hallUpdate) {
 		Hall hall = getDao().get(hallUpdate.getId());
+		logger.info("hall update size" + hallUpdate.getHallSegmentList().size());
 		hall.setName(hallUpdate.getName());
-		Type hallSegmentType = new TypeToken<List<HallSegmentPreviewDTO>>() {}.getType();
-		hall.setHallSegmentList(modelMapper.map(hallUpdate.getHallSegmentList(), hallSegmentType));
-		/*if(hall.getHallSegmentList().size() != hallUpdate.getHallSegmentList().size()) {
-			for(HallSegment segment : hall.getHallSegmentList()) {
-				if(hallUpdate.getHallSegmentList().stream().filter(seg -> seg.getId().equals(segment.getId())).findFirst().orElse(null) != null) {
-					
-				}
+		Type hallSegmentType = new TypeToken<List<HallSegment>>() {}.getType();
+		Set<HallSegment> segmentSet = new HashSet<>(modelMapper.map(hallUpdate.getHallSegmentList(), hallSegmentType));
+		logger.info("sizes: " + segmentSet.size() + " size 2 " + hall.getHallSegmentList().size());
+		for(HallSegment seg : segmentSet) {
+			seg.setHall(hall);
+			for(Seating seat : seg.getSeatingList()) {
+				seat.setHallSegment(seg);
 			}
+		}
+		/*if(segmentSet.size() < hall.getHallSegmentList().size()){
+			logger.info("za brisanje");
+			List<Integer> newSegmentIds = segmentSet.stream()
+										.map(seg -> seg.getId())
+										.collect(Collectors.toList()); 
+			newSegmentIds.removeIf(id -> id == null);
+			boolean obrisanNeki = hall.getHallSegmentList().removeIf(seg -> !newSegmentIds.contains(seg.getId()));
+			logger.info("obrisan neki " + obrisanNeki);
+			hall = getDao().update(hall);
 		}*/
+		
+		hall.setHallSegmentList(segmentSet);
+		hall = getDao().update(hall);
+		logger.info("segment size " + segmentSet.size());
 		return convertToDto(hall, HallPreviewDTO.class);
 	}
 	

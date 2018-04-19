@@ -9,8 +9,6 @@ public class HallSegmentPreviewDTO {
 	private String name;
 	private Integer seatingsNo;
 	private List<SeatingPreviewDTO> seatingList;
-	@ForeignKeyDTO(clazzFK=HallPreviewDTO.class)
-	private Integer hallId;
 	
 	public Integer getId() {
 		return id;
@@ -35,11 +33,5 @@ public class HallSegmentPreviewDTO {
 	}
 	public void setSeatingList(List<SeatingPreviewDTO> seatingList) {
 		this.seatingList = seatingList;
-	}
-	public Integer getHallId() {
-		return hallId;
-	}
-	public void setHallId(Integer hallId) {
-		this.hallId = hallId;
 	}
 }
