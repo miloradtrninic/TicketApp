@@ -26,6 +26,7 @@ import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
 @RestController
 @RequestMapping(value="/theatre")
 public class TheatreResource extends AbstractController<Theatre, Integer> {
+	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TheatrePreviewDTO>> getAll(){
 		List<Theatre> list = getDao().getAll();
