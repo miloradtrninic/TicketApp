@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,27 +100,34 @@ public class AuthResource {
 	@Value("mySecret")
 	private String secret;
 
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	@RequestMapping(value="/login",
 			method=RequestMethod.POST,
 			consumes= {"application/json", "application/json;charset=UTF-8"},
 			produces= {"application/json"})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 		try{
+			logger.info("username " + authenticationRequest.getUsername());
 			User user = userDao.getByUserName(authenticationRequest.getUsername());
 
 			if(user != null) {
 				if(user.isEnabled()) {
+					logger.info("enabled");
 					UsernamePasswordAuthenticationToken tokenauth = new UsernamePasswordAuthenticationToken(
 							authenticationRequest.getUsername(),
 							authenticationRequest.getPassword());
 					final Authentication authentication = authenticationManager.authenticate(tokenauth);
+					logger.info("authenticated");
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 					final UserDetails userDetails = myAppUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 					final String token = jwtTokenUtil.generateToken(userDetails);
+					logger.info("token : " + token);
 					List<String> roles = user.getUserRoles().stream().map(r -> r.getName()).collect(Collectors.toList());
-
+					logger.info("roles : " + roles);
 					return ResponseEntity.ok(new JwtAuthenticationResponse(user.getId(), token, roles, getUserPrivilegeNames(user)));
 				} else {
+					logger.info("NOT ACCEPTED");
 					return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(messages.getMessage("auth.msg.accLocked", null, new Locale("en)")));
 				}
 			} else {
@@ -151,7 +160,6 @@ public class AuthResource {
 		return ret;
 	}
 
-	@Secured("ROLE_ANONYMOUS")
 	@PostMapping(value="/register",
 				consumes = {"application/json","application/json;charset=UTF-8"},
 				produces = {"application/json"})
@@ -161,8 +169,9 @@ public class AuthResource {
 		UserRole role = null;
 		User userName = userDao.getByUserName(user.getUsername());
 		User userEmail = userDao.getByEmail(user.getEmail());
-
-		if(userName == null && userEmail == null && validateUserInfo(user)) {
+		boolean valid =  validateUserInfo(user);
+		logger.info("valid " + valid);
+		if(userName == null && userEmail == null && valid) {
 			role = roleDao.get(3);							//Recimo da je 1 obican user (registered)
 			user.setMembership(membershipDao.get(1));		//Recimo da 1 obicno clanstvo (bronza)
 			user.setEnabled(false);
