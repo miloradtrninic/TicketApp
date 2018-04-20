@@ -3,9 +3,12 @@ package com.msmisa.TicketApp.resources;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.Cinema;
 import com.msmisa.TicketApp.beans.Theatre;
+import com.msmisa.TicketApp.beans.UserAuditorium;
+import com.msmisa.TicketApp.dao.auditorium.AuditoriumDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.TheatreCreationDTO;
+import com.msmisa.TicketApp.dto.creation.UserAuditoriumCreationDTO;
 import com.msmisa.TicketApp.dto.preview.CinemaPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
+import com.msmisa.TicketApp.dto.preview.UserAuditoriumPreviewDTO;
 import com.msmisa.TicketApp.dto.update.CinemaUpdateDTO;
 import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
 
 @RestController
 @RequestMapping(value="/theatre")
 public class TheatreResource extends AbstractController<Theatre, Integer> {
+	
+	@Autowired
+	AuditoriumDao daoAud;
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TheatrePreviewDTO>> getAll(){
@@ -36,6 +46,17 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 		else
 			return new ResponseEntity<List<TheatrePreviewDTO>>(theatreDtoList,HttpStatus.OK);
 
+	}
+	
+	
+	@PostMapping(value="/rate",
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public UserAuditoriumPreviewDTO rateTheatre(UserAuditoriumCreationDTO creation){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+		UserAuditorium aud = daoAud.rateAuditorium(creation.getAutId(), username, creation.getRating());
+		return modelMapper.map(aud, UserAuditoriumPreviewDTO.class);
 	}
 
 

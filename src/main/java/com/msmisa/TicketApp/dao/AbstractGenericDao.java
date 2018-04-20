@@ -6,6 +6,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -31,7 +33,7 @@ public abstract class AbstractGenericDao <Entity, Key> implements GenericDao<Ent
 		this.sessionFactory = sessionFactory;
 		resolveGenericType();
 	}
-
+	protected final Log logger = LogFactory.getLog(getClass());
 	@SuppressWarnings("unchecked")
 	private void resolveGenericType() {
 		Type t = getClass().getGenericSuperclass();

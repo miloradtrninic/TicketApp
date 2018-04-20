@@ -9,7 +9,7 @@ public class AuditoriumUpdateDTO {
 	private String name;
 	private String address;
 	private String description;
-	private Integer ratings;
+	private Double ratings;
 	
 	
 	
@@ -37,12 +37,13 @@ public class AuditoriumUpdateDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Integer getRatings() {
+	public Double getRatings() {
 		return ratings;
 	}
-	public void setRatings(Integer ratings) {
+	public void setRatings(Double ratings) {
 		this.ratings = ratings;
 	}
+
 	
 	
 }
