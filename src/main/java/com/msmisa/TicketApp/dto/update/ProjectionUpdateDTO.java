@@ -2,6 +2,8 @@ package com.msmisa.TicketApp.dto.update;
 
 import java.util.List;
 
+import javax.persistence.Id;
+
 import com.msmisa.TicketApp.beans.movie.Actor;
 import com.msmisa.TicketApp.beans.movie.Director;
 import com.msmisa.TicketApp.beans.movie.Genre;
@@ -9,48 +11,26 @@ import com.msmisa.TicketApp.dto.ForeignKeyDTO;
 
 public class ProjectionUpdateDTO {
 
+	@Id
+	private Integer id;
 	private String name;
-	private Integer ratings;
-	@ForeignKeyDTO(clazzFK=Actor.class)
-	private List<Integer> actorIds;
-	@ForeignKeyDTO(clazzFK=Genre.class)
-	private List<Integer> genreIds;
-	@ForeignKeyDTO(clazzFK=Director.class)
-	private Integer directorId;
+	private String description;
 	private Integer durationMinutes;
 	private String coverPath;
-	private String description;
 	
 	
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public Integer getRatings() {
-		return ratings;
-	}
-	public void setRatings(Integer ratings) {
-		this.ratings = ratings;
-	}
-	public List<Integer> getActorIds() {
-		return actorIds;
-	}
-	public void setActorIds(List<Integer> actorIds) {
-		this.actorIds = actorIds;
-	}
-	public List<Integer> getGenreIds() {
-		return genreIds;
-	}
-	public void setGenreIds(List<Integer> genreIds) {
-		this.genreIds = genreIds;
-	}
-	public Integer getDirectorId() {
-		return directorId;
-	}
-	public void setDirectorId(Integer directorId) {
-		this.directorId = directorId;
 	}
 	public Integer getDurationMinutes() {
 		return durationMinutes;

@@ -65,9 +65,6 @@ public class CinemaResurce extends AbstractController<Cinema, Integer>{
 	
 	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public CinemaPreviewDTO update(@RequestBody CinemaUpdateDTO entity){
-		logger.info("ovo je id aaaaaaaaaaaaa : " + entity.getId());
-		logger.info("ovo je name aaaaaaaaaaaaa : " + entity.getName());
-		logger.info("ovo je desc aaaaaaaaaaaaa : " + entity.getDescription());
 		Cinema cinema = getDao().get(entity.getId());
 		cinema.setAddress(entity.getAddress());
 		cinema.setDescription(entity.getDescription());

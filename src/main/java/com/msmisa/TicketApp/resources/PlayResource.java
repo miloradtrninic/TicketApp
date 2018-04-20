@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.msmisa.TicketApp.beans.Movie;
 import com.msmisa.TicketApp.beans.Play;
 import com.msmisa.TicketApp.dao.auditorium.TheatreDao;
 import com.msmisa.TicketApp.dao.projection.PlayDao;
@@ -20,6 +23,7 @@ import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.PlayCreationDTO;
 import com.msmisa.TicketApp.dto.preview.MoviePreviewDTO;
 import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
+import com.msmisa.TicketApp.dto.update.MovieUpdateDTO;
 import com.msmisa.TicketApp.dto.update.PlayUpdateDTO;
 
 @RestController
@@ -69,8 +73,14 @@ public class PlayResource extends AbstractController<Play, Integer>{
 
 	
 	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Play update(@DTO(value=PlayUpdateDTO.class) Play entity){
-		return getDao().update(entity);
+	public PlayPreviewDTO update(@RequestBody PlayUpdateDTO entity){
+		Play play = getDao().get(entity.getId());
+		play.setName(entity.getName());
+		play.setDescription(entity.getDescription());
+		play.setDurationMinutes(entity.getDurationMinutes());
+		play.setCoverPath(entity.getCoverPath());
+		
+		return convertToDto(getDao().update(play), PlayPreviewDTO.class);
 	}
 	
 }
