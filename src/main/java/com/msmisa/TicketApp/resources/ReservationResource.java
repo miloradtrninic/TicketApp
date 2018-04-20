@@ -130,7 +130,9 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 				}
 			}
 			if(ret == null) {
-				Reservation r = new Reservation(userDao.get(res.getReservedBy()), Sets.newHashSet(resTicketList));
+				Reservation r = new Reservation();
+				r.setReservedBy(userDao.get(res.getReservedBy()));
+				r.setTicketList(Sets.newHashSet(resTicketList));
 				String appUrl = req.getContextPath();
 				eventPublisher.publishEvent(new OnReservationCompleteEvent(appUrl, new Locale("en"), r, invitedUsers));
 				r.setTicketList(resTicketList.stream().map(t -> t = tickDao.update(t)).collect(Collectors.toSet()));

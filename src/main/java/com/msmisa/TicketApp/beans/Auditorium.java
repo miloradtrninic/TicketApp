@@ -39,7 +39,7 @@ public abstract class Auditorium {
 	private Integer ratings;
 	private FanZone fanZone;
 	private Set<User> admin;
-	private String entity_type;
+	private String type;
 	
 	public Auditorium() {
 	}
@@ -94,17 +94,12 @@ public abstract class Auditorium {
 		this.admin = admin;
 	}
 
+	@Column(name="entity_type", nullable=false, updatable=false, insertable=false)
 	public String getEntity_type() {
-		return entity_type;
+		return type;
 	}
 
 	public void setEntity_type(String entity_type) {
-		this.entity_type = entity_type;
+		this.type = entity_type;
 	}
-	
-	
-	
-	
-	
-	
 }
