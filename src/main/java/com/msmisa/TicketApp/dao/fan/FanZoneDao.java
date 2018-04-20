@@ -10,4 +10,6 @@ import com.msmisa.TicketApp.dao.GenericDao;
 
 public interface FanZoneDao extends GenericDao<FanZone, Integer> {
 	Set<User> getAdmins(Integer zoneID) throws DaoException;
+
+	List<FanZone> getMyZones(String usernameAdmin) throws DaoException;
 }

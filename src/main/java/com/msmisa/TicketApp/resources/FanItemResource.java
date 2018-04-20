@@ -50,14 +50,18 @@ public class FanItemResource extends AbstractController<FanItem, Integer>{
 						   @RequestParam("description") String description, 
 						   @RequestParam("fanzoneId") Integer fanzoneId, 
 						   @RequestParam("image") MultipartFile file) {
-		if (!file.isEmpty()) {
+		
 	        try {
 	        	FanZone zone = zoneDao.get(fanzoneId);
 				FanItem item = new FanItem();
 				item.setDescription(description);
 				item.setFanzone(zone);
 				item.setName(name);
-	        	item.setImagePath(storageService.store(file, name));
+				if (!file.isEmpty()) {
+					item.setImagePath(storageService.store(file, name));
+				} else {
+					item.setImagePath("no_picture.png");
+				}
 	        	item = getDao().insert(item);
 	        	logger.info("inserted");
 	        	return new ResponseEntity<FanItemPreviewDTO>(convertToDto(item, FanItemPreviewDTO.class), HttpStatus.OK);
@@ -65,9 +69,7 @@ public class FanItemResource extends AbstractController<FanItem, Integer>{
 	        	e.printStackTrace();
 	        	return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	        }
-        } else {
-        	return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
-        }
+       
 		
 	}
 	

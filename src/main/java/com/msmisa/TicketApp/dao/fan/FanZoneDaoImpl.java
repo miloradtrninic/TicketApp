@@ -1,9 +1,12 @@
 package com.msmisa.TicketApp.dao.fan;
 
+import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,4 +33,20 @@ public class FanZoneDaoImpl extends AbstractGenericDao<FanZone, Integer> impleme
 		Set<User> admins = zone.getAdmin();
 		return admins;
 	}
+	@Override
+	public List<FanZone> getMyZones(String usernameAdmin) throws DaoException {
+		// TODO Auto-generated method stub
+		try {
+			return getSessionFactory()
+			.getCurrentSession()
+			.createCriteria(FanZone.class)
+			.createAlias("admin", "a")
+			.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+			.add(Restrictions.eq("a.username", usernameAdmin))
+			.list();
+		} catch(Exception e) {
+			throw new DaoException(e.getMessage());
+		}
+	}
+	
 }
