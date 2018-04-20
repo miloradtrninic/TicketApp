@@ -26,6 +26,11 @@ public class Reservation {
 	private Set<Ticket> ticketList;
 	
 	
+	public Reservation(User reservedBy, Set<Ticket> ticketList) {
+		super();
+		this.reservedBy = reservedBy;
+		this.ticketList = ticketList;
+	}
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "ID", unique = true, nullable = false)

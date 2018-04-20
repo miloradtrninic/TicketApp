@@ -1,10 +1,14 @@
 package com.msmisa.TicketApp.resources;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.assertj.core.util.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -127,9 +131,37 @@ public class UserResource extends AbstractController<User, Integer> {
 		User user = userDao.get(id);
 		List<User> allUsers = userDao.getAll();
 		Set<User> users = user.getFriends();
-		Set<UserPreviewDTO> usersDTO = allUsers.stream()
-											.filter(u -> users.contains(u) == true && u.getId() != user.getId())
-											.map(u -> convertToDto(u, UserPreviewDTO.class)).collect(Collectors.toSet());
+		Set<UserPreviewDTO> usersDTO = new HashSet<UserPreviewDTO>();
+
+		for(User u : allUsers) {
+			boolean shouldAdd = false;
+			for(User u2 : users) {
+				if(u2.getId() == u.getId()) {
+					System.out.println("Add1: "+u2.getEmail());
+					System.out.println("Add2: " + u.getEmail());
+					shouldAdd = true;
+					break;
+				}
+			}
+			for(User fr : user.getFriendRequests()) {
+				if(fr.getId() == u.getId()) {
+					shouldAdd = false;
+					break;
+				}
+			}
+			for(User frs : user.getFriendRequestsSent()) {
+				if(frs.getId() == u.getId()) {
+					shouldAdd = false;
+					break;
+				}
+			}
+			if(shouldAdd && user.getId() != u.getId()) {
+				usersDTO.add(convertToDto(u, UserPreviewDTO.class));
+				System.out.println("Pushing user: "+u.getEmail());
+				System.out.println("User info: " + user.getEmail());
+			}
+
+		}
 
 		if(usersDTO.isEmpty())
 			ret = new ResponseEntity<Set<UserPreviewDTO>>(usersDTO, HttpStatus.NO_CONTENT);
@@ -145,11 +177,32 @@ public class UserResource extends AbstractController<User, Integer> {
 		User user = userDao.get(id);
 		List<User> allUsers = userDao.getAll();
 		Set<User> users = user.getFriends();
-		Set<UserPreviewDTO> usersDTO = allUsers.stream()
-									.filter(u -> users.contains(u) == false &&
-												 user.getFriendRequests().contains(u) == false &&
-												 u.getId() != user.getId())
-									.map(u -> convertToDto(u, UserPreviewDTO.class)).collect(Collectors.toSet());
+		Set<UserPreviewDTO> usersDTO = new HashSet<UserPreviewDTO>();
+
+		for(User u : allUsers) {
+			boolean shouldAdd = true;
+			for(User u2 : users) {
+				if(u2.getId() == u.getId()) {
+					shouldAdd = false;
+					break;
+				}
+			}
+			for(User fr : user.getFriendRequests()) {
+				if(fr.getId() == u.getId()) {
+					shouldAdd = false;
+					break;
+				}
+			}
+			for(User frs : user.getFriendRequestsSent()) {
+				if(frs.getId() == u.getId()) {
+					shouldAdd = false;
+					break;
+				}
+			}
+			if(shouldAdd && user.getId() != u.getId())
+				usersDTO.add(convertToDto(u, UserPreviewDTO.class));
+		}
+
 
 		if(usersDTO.isEmpty())
 			ret = new ResponseEntity<Set<UserPreviewDTO>>(usersDTO, HttpStatus.NO_CONTENT);
@@ -184,27 +237,58 @@ public class UserResource extends AbstractController<User, Integer> {
 		ResponseEntity<UserPreviewDTO> ret = null;
 		User sender = userDao.get(senderId);
 		User target = userDao.get(targetId);
+		boolean aa = sender.getFriends().contains(target) && target.getFriends().contains(sender);
 
-		if(sender.getFriends().contains(target) && target.getFriends().contains(sender)) {
-			sender.getFriendRequestsSent().remove(target);
-			sender.getFriends().remove(target);
-			target.getFriendRequests().remove(sender);
-			target.getFriends().remove(sender);
+		try{
+			List<User> friendlist = new ArrayList<User>(sender.getFriends());
+			for(int i=0; i<friendlist.size(); i++) {
+				User req = friendlist.get(i);
+				if(req.getId() == targetId) {
+					friendlist.remove(i);
+				}
+			}
+			sender.setFriends(new HashSet<User>(friendlist));
+
+			List<User> requests = new ArrayList<User>(target.getFriends());
+			for(int i=0; i<requests.size(); i++) {
+				User req = requests.get(i);
+				if(req.getId() == senderId) {
+					requests.remove(i);
+				}
+			}
+			target.setFriends(new HashSet<User>(requests));
+
+			List<User> sentrequests = new ArrayList<User>(sender.getFriendRequestsSent());
+			for(int i=0; i<sentrequests.size(); i++) {
+				User req = sentrequests.get(i);
+				if(req.getId() == targetId) {
+					sentrequests.remove(i);
+				}
+			}
+			sender.setFriendRequestsSent(new HashSet<User>(sentrequests));
+			
+			List<User> friendrequests = new ArrayList<User>(target.getFriendRequests());
+			for(int i=0; i<friendrequests.size(); i++) {
+				User req = friendrequests.get(i);
+				if(req.getId() == senderId) {
+					friendrequests.remove(i);
+				}
+			}
+			target.setFriendRequests(new HashSet<User>(friendrequests));
+
 			userDao.update(sender);
 			userDao.update(target);
+
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
-		} else if(sender.getFriendRequestsSent().contains(target)) {
-			sender.getFriendRequestsSent().remove(target);
-			userDao.update(sender);
-			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
-		} else {
+		} catch(Exception e) {
+			e.printStackTrace();
 			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
 		}
 
 		return ret;
 	}
 
-	@GetMapping(value="/acceptFriendship/{id}", produces= {"application/json"})
+	@PutMapping(value="/acceptFriendship/{id}", produces= {"application/json"})
 	public ResponseEntity<UserPreviewDTO> acceptFriendRequest(@PathVariable("id") Integer accepterId,
 															  @RequestBody Integer requestSenderId) {
 		ResponseEntity<UserPreviewDTO> ret = null;
@@ -213,22 +297,38 @@ public class UserResource extends AbstractController<User, Integer> {
 
 		try {
 			target.getFriends().add(sender);
-			target.getFriendRequests().remove(sender);
+			List<User> requests = new ArrayList<User>(target.getFriendRequests());
+			for(int i=0; i<requests.size(); i++) {
+				User req = requests.get(i);
+				if(req.getId() == requestSenderId) {
+					requests.remove(i);
+				}
+			}
+			target.setFriendRequests(new HashSet<User>(requests));
+
+			List<User> sentrequests = new ArrayList<User>(sender.getFriendRequestsSent());
+			for(int i=0; i<sentrequests.size(); i++) {
+				User req = sentrequests.get(i);
+				if(req.getId() == accepterId) {
+					sentrequests.remove(i);
+				}
+			}
+			sender.setFriendRequestsSent(new HashSet<User>(sentrequests));
 			sender.getFriends().add(target);
-			sender.getFriendRequestsSent().remove(target);
+			
 			userDao.update(sender);
 			userDao.update(target);
-			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
+			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(sender, UserPreviewDTO.class), HttpStatus.OK);
 		} catch(Exception e ) {
 			System.out.println("Greska pri prihvatanju prijatelja");
 			e.printStackTrace();
-			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
+			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(sender, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
 		}
 
 		return ret;
 	}
 
-	@GetMapping(value="/declineFriendship/{id}", produces= {"application/json"})
+	@PutMapping(value="/declineFriendship/{id}", produces= {"application/json"})
 	public ResponseEntity<UserPreviewDTO> declineFriendRequest(@PathVariable("id") Integer declinerId,
 			  @RequestBody Integer requestSenderId) {
 		ResponseEntity<UserPreviewDTO> ret = null;
@@ -236,15 +336,30 @@ public class UserResource extends AbstractController<User, Integer> {
 		User target = userDao.get(declinerId);
 
 		try {
-			target.getFriendRequests().remove(sender);
-			sender.getFriendRequestsSent().remove(target);
+			List<User> requests = new ArrayList<User>(target.getFriendRequests());
+			for(int i=0; i<requests.size(); i++) {
+				User req = requests.get(i);
+				if(req.getId() == requestSenderId) {
+					requests.remove(i);
+				}
+			}
+			target.setFriendRequests(new HashSet<User>(requests));
+
+			List<User> sentrequests = new ArrayList<User>(sender.getFriendRequestsSent());
+			for(int i=0; i<sentrequests.size(); i++) {
+				User req = sentrequests.get(i);
+				if(req.getId() == declinerId) {
+					sentrequests.remove(i);
+				}
+			}
+			sender.setFriendRequestsSent(new HashSet<User>(sentrequests));
 			userDao.update(sender);
 			userDao.update(target);
-			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.OK);
+			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(sender, UserPreviewDTO.class), HttpStatus.OK);
 		} catch(Exception e ) {
 			System.out.println("Greska pri prihvatanju prijatelja");
 			e.printStackTrace();
-			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(target, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
+			ret = new ResponseEntity<UserPreviewDTO>(convertToDto(sender, UserPreviewDTO.class), HttpStatus.NOT_ACCEPTABLE);
 		}
 
 		return ret;

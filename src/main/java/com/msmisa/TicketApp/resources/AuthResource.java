@@ -176,7 +176,6 @@ public class AuthResource {
 			user.setUserAds(new HashSet<FanAd>());
 
 			try {
-				System.out.println("Treba mail poslati!");
 				String appUrl = request.getContextPath();
 				eventPublisher.publishEvent(new OnRegistrationCompleteEvent(appUrl, request.getLocale(), user));
 				toRet = userDao.insert(user);
@@ -232,7 +231,7 @@ public class AuthResource {
 	}
 
 	private boolean validateUserInfo(User user) {
-		return user.getUsername().length() > 2 && user.getPassword().length() > 8
+		return user.getUsername().length() > 2 && user.getPassword().length() >= 6
 				&& user.getPhoneNo().length() >=9 && user.getPhoneNo().length() <= 10
 				&& user.getLastname() != null && user.getName() != null && user.getEmail().indexOf('@') != -1;
 	}

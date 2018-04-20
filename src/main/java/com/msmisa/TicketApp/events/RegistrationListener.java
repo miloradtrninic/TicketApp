@@ -63,6 +63,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 		c.add(Calendar.DATE, 1);
 		Date tommorow = c.getTime();
 		
+		System.out.println(today);
+		System.out.println(tommorow);
+		System.out.println(tommorow.getTime() > today.getTime());
+		
 		String token = Jwts.builder()
 					   .setIssuer(event.getAppUrl())
 					   .setSubject(user.getUsername())

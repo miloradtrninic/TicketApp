@@ -3,13 +3,15 @@ package com.msmisa.TicketApp.dto.creation;
 import java.util.List;
 
 import com.msmisa.TicketApp.dto.ForeignKeyDTO;
+import com.msmisa.TicketApp.dto.preview.UserPreviewDTO;
 
 public class ReservationCreationDTO {
 	
 	private Integer id;
 	@ForeignKeyDTO(clazzFK=UserCreationDTO.class)
 	private Integer reservedBy;
-	private List<TicketCreationDTO> ticketList;
+	private List<Integer> ticketList;
+	private List<Integer> invitedUsersID;
 
 	public Integer getId() {
 		return id;
@@ -27,13 +29,18 @@ public class ReservationCreationDTO {
 		this.reservedBy = reservedBy;
 	}
 
-	public List<TicketCreationDTO> getTicketList() {
+	public List<Integer> getTicketList() {
 		return ticketList;
 	}
 
-	public void setTicketList(List<TicketCreationDTO> ticketList) {
+	public void setTicketList(List<Integer> ticketList) {
 		this.ticketList = ticketList;
-	} 
-	
-	
+	}
+	public List<Integer> getInvitedUsersID() {
+		return invitedUsersID;
+	}
+
+	public void setInvitedUsersID(List<Integer> invitedUsersID) {
+		this.invitedUsersID = invitedUsersID;
+	}
 }

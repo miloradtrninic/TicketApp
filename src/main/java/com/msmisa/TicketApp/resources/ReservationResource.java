@@ -5,10 +5,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.assertj.core.util.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 import com.msmisa.TicketApp.beans.Auditorium;
 import com.msmisa.TicketApp.beans.Reservation;
@@ -40,6 +44,7 @@ import com.msmisa.TicketApp.dto.preview.AuditoriumPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.ReservationPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TicketPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.UserPreviewDTO;
+import com.msmisa.TicketApp.events.OnReservationCompleteEvent;
 import com.msmisa.TicketApp.dto.preview.ReservationPreviewDTO;
 
 @RestController
@@ -50,6 +55,12 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	
 	@Autowired
 	private TicketDao tickDao;
+	
+	@Autowired
+	private UserDao userDao;
+	
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@GetMapping(value={"getaAll/{id}"}, produces= {"application/json"})
 	public ResponseEntity<?> getAllForUser(@RequestParam("id") String id) {
@@ -105,9 +116,9 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	}
 	
 	@PostMapping(value="/new", consumes= {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<?> createReservation(@DTO(ReservationCreationDTO.class) Reservation res) {
-		@SuppressWarnings("unchecked")
-		List<Ticket> resTicketList = (List<Ticket>) res.getTicketList();
+	public ResponseEntity<?> createReservation(ReservationCreationDTO res, WebRequest req) {
+		List<Ticket> resTicketList = tickDao.getAllIn(res.getTicketList());
+		List<User> invitedUsers = userDao.getAllIn(res.getInvitedUsersID());
 		List<Ticket> allTickets = tickDao.getAll();
 		ResponseEntity<?> ret = null;
 		try {
@@ -119,8 +130,11 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 				}
 			}
 			if(ret == null) {
-				res.setTicketList(resTicketList.stream().map(t -> t = tickDao.update(t)).collect(Collectors.toSet()));
-				ret = new ResponseEntity<Reservation>(res, HttpStatus.OK);
+				Reservation r = new Reservation(userDao.get(res.getReservedBy()), Sets.newHashSet(resTicketList));
+				String appUrl = req.getContextPath();
+				eventPublisher.publishEvent(new OnReservationCompleteEvent(appUrl, new Locale("en"), r, invitedUsers));
+				r.setTicketList(resTicketList.stream().map(t -> t = tickDao.update(t)).collect(Collectors.toSet()));
+				ret = new ResponseEntity<ReservationPreviewDTO>(convertToDto(r, ReservationPreviewDTO.class), HttpStatus.OK);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
