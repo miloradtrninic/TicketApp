@@ -28,9 +28,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "AUDITORIUM")  
+@Table(name = "AUDITORIUM")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "entity_type",discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "entity_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Auditorium {
 	private Integer id;
 	private String name;
@@ -40,10 +40,10 @@ public abstract class Auditorium {
 	private FanZone fanZone;
 	private Set<User> admin;
 	private String type;
-	
+
 	public Auditorium() {
 	}
-	
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "ID", unique = true, nullable = false)
@@ -93,7 +93,6 @@ public abstract class Auditorium {
 	public void setAdmin(Set<User> admin) {
 		this.admin = admin;
 	}
-
 	@Column(name="entity_type", nullable=false, updatable=false, insertable=false)
 	public String getEntity_type() {
 		return type;

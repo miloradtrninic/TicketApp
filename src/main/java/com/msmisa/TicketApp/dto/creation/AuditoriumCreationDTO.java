@@ -1,13 +1,12 @@
 package com.msmisa.TicketApp.dto.creation;
 
 public class AuditoriumCreationDTO {
-	
+
 	private String name;
 	private String address;
 	private String description;
-	//private String type;
 	private Integer ratings;
-	
+
 	public String getName() {
 		return name;
 	}
@@ -32,10 +31,13 @@ public class AuditoriumCreationDTO {
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
 	}
+<<<<<<< HEAD
 	/*public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
 	}*/
+=======
+>>>>>>> 27d413ea20ed4e7794324d1714d2b84fecc32cb8
 }
