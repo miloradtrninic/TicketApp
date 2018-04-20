@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class FanItemDaoImpl extends AbstractGenericDao<FanItem, Integer> impleme
 					.createCriteria(FanItem.class)
 					.createAlias("fanZone", "fz")
 					.add(Restrictions.eq("fz.id", zoneID))
+					.add(Restrictions.isNull("reservedBy"))
 					.list();
 		} catch (HibernateException e) {
 			throw new DaoException(e.getMessage());
@@ -50,14 +52,29 @@ public class FanItemDaoImpl extends AbstractGenericDao<FanItem, Integer> impleme
 						.list();
 			User user = users.get(0);
 			FanItem item = get(id);
-			Hibernate.initialize(user.getFanItems());
-			user.getFanItems().add(item);
-			getSessionFactory().getCurrentSession().saveOrUpdate(user);
-			return item;
+			if(item.getReservedBy() != null) {
+				return item;
+			}
+			getSessionFactory().getCurrentSession().lock(item, LockMode.OPTIMISTIC);
+			item.setReservedBy(user);
+			return update(item);
 		} catch (HibernateException e) {
 			throw new DaoException(e.getMessage());
 		}
 
 	}
-
+	@Override
+	public List<FanItem> getReserved(String username) throws DaoException {
+		try {
+			List<FanItem> items = getSessionFactory()
+									.getCurrentSession()
+									.createCriteria(FanItem.class)
+									.createAlias("reservedBy", "user")
+									.add(Restrictions.eq("user.username", username))
+									.list();
+			return items;
+		} catch (Exception e) {
+			throw new DaoException(e.getMessage());
+		}
+	}
 }

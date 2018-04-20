@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -39,6 +42,7 @@ public class FanAd {
 	private Date expirationDate;
 	private Set<Bid> bidList;
 	private User admin;
+	private Bid acceptedBid;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -96,13 +100,14 @@ public class FanAd {
 	public void setAccepted(Boolean accepted) {
 		this.accepted = accepted;
 	}
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-	@OneToMany(mappedBy="fanAd")
+	@OneToMany(mappedBy="fanAd", orphanRemoval=true, fetch=FetchType.EAGER)
 	@JsonManagedReference(value="bid_ad")
 	@Cascade(value=CascadeType.ALL)
 	public Set<Bid> getBidList() {
@@ -118,6 +123,14 @@ public class FanAd {
 	}
 	public void setAdmin(User admin) {
 		this.admin = admin;
+	}
+	@OneToOne(optional=true, fetch = FetchType.EAGER)
+	@JoinColumn(name="ACCEPTED_BID", insertable=false)
+	public Bid getAcceptedBid() {
+		return acceptedBid;
+	}
+	public void setAcceptedBid(Bid acceptedBid) {
+		this.acceptedBid = acceptedBid;
 	}
 	
 	

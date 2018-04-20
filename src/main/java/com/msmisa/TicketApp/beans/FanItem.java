@@ -20,6 +20,7 @@ public class FanItem {
 	private String imagePath;
 	private String description;
 	private FanZone fanzone;
+	private User reservedBy;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -64,6 +65,16 @@ public class FanItem {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@ManyToOne(optional=true)
+	@JoinColumn(nullable=true, name="USER_ID", referencedColumnName="ID")
+	public User getReservedBy() {
+		return reservedBy;
+	}
+
+	public void setReservedBy(User reservedBy) {
+		this.reservedBy = reservedBy;
 	}
 	
 	

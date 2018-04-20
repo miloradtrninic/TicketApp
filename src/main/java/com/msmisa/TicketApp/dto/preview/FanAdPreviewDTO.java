@@ -3,14 +3,18 @@ package com.msmisa.TicketApp.dto.preview;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class FanAdPreviewDTO {
 	private Integer id;
 	private String name;
 	private String description;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date dateCreated;
 	private String imagePath;
 	private UserPreviewDTO postedBy;
 	private Boolean accepted;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date expirationDate;
 	private List<BidPreviewDTO> bidList;
 	

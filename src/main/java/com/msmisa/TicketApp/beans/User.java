@@ -203,9 +203,7 @@ public class User {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	@ManyToMany
-	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinTable(name="USERS_ITEMS", joinColumns= @JoinColumn(name="USER_ID"), inverseJoinColumns=@JoinColumn(name = "ITEM_ID"))
+	@OneToMany(mappedBy="reservedBy", orphanRemoval=true)
 	public Set<FanItem> getFanItems() {
 		return fanItems;
 	}

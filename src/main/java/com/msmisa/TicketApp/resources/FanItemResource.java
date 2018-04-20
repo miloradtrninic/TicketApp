@@ -1,11 +1,7 @@
 package com.msmisa.TicketApp.resources;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.msmisa.TicketApp.beans.FanItem;
 import com.msmisa.TicketApp.beans.FanZone;
-import com.msmisa.TicketApp.beans.User;
 import com.msmisa.TicketApp.dao.fan.FanItemDao;
 import com.msmisa.TicketApp.dao.fan.FanZoneDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
@@ -104,8 +98,16 @@ public class FanItemResource extends AbstractController<FanItem, Integer>{
 	@GetMapping(value="reserve/{itemId}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<FanItemPreviewDTO> reserve(@PathVariable("itemId") Integer id) {
 		FanItemDao dao = (FanItemDao) getDao();
-		//TO Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		//TODO Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		FanItem item = dao.reserve("admin", id);
 		return new ResponseEntity<FanItemPreviewDTO>(convertToDto(item, FanItemPreviewDTO.class), HttpStatus.OK);
+	}
+	
+	@GetMapping(value="myitems", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<FanItemPreviewDTO>> reserve() {
+		FanItemDao dao = (FanItemDao) getDao();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		List<FanItem> items = dao.getReserved(authentication.getName());
+		return new ResponseEntity<List<FanItemPreviewDTO>>(convertToDto(items, FanItemPreviewDTO.class), HttpStatus.OK);
 	}
 }

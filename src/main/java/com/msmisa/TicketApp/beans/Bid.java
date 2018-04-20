@@ -48,7 +48,6 @@ public class Bid {
 	public void setOffer(Double offer) {
 		this.offer = offer;
 	}
-	@JsonBackReference(value="bid_ad")
 	@ManyToOne
 	@JoinColumn(name="FANAD_ID", nullable=false)
 	public FanAd getFanAd() {
