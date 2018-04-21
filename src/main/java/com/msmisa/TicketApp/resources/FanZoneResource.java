@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,5 +75,13 @@ public class FanZoneResource extends AbstractController<FanZone, Integer> {
 		zone.setAdmin(new HashSet<>(admins));
 		zone = getDao().update(zone);
 		return new ResponseEntity<FanZonePreviewDTO>(convertToDto(zone, FanZonePreviewDTO.class), HttpStatus.OK);
+	}
+	@GetMapping(value="myzones", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<FanZonePreviewDTO>> myAds(){
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String usernameAdmin = authentication.getName();
+		FanZoneDao dao = (FanZoneDao) getDao();
+		List<FanZone> zones = dao.getMyZones(usernameAdmin);
+		return new ResponseEntity<List<FanZonePreviewDTO>>(convertToDto((zones), FanZonePreviewDTO.class), HttpStatus.OK);
 	}
 }

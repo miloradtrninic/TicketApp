@@ -36,7 +36,7 @@ public abstract class Auditorium {
 	private String name;
 	private String address;
 	private String description;
-	private Integer ratings;
+	private Double ratings;
 	private FanZone fanZone;
 	private Set<User> admin;
 	private String type;
@@ -71,12 +71,14 @@ public abstract class Auditorium {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Integer getRatings() {
+	public Double getRatings() {
 		return ratings;
 	}
-	public void setRatings(Integer ratings) {
+
+	public void setRatings(Double ratings) {
 		this.ratings = ratings;
 	}
+
 	@OneToOne(mappedBy="auditorium")
 	public FanZone getFanZone() {
 		return fanZone;
