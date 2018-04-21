@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
@@ -23,6 +26,7 @@ public class Bid {
 	private Double offer;
 	private FanAd fanAd;
 	private Date offerDate;
+	private Boolean accepted;
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -61,6 +65,12 @@ public class Bid {
 	}
 	public void setOfferDate(Date offerDate) {
 		this.offerDate = offerDate;
+	}
+	public Boolean getAccepted() {
+		return accepted;
+	}
+	public void setAccepted(Boolean accepted) {
+		this.accepted = accepted;
 	}
 	
 	

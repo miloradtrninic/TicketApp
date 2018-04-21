@@ -5,23 +5,24 @@ import com.msmisa.TicketApp.beans.User;
 import com.msmisa.TicketApp.dto.ForeignKeyDTO;
 
 public class BidCreationDTO {
-	private String offer;
+	private Double offer;
 	
 	@ForeignKeyDTO(clazzFK=FanAd.class)
-	private int fanAdId;
+	private int adFK;
 	
-	public String getOffer() {
+	public Double getOffer() {
 		return offer;
 	}
-	public void setOffer(String offer) {
+	public void setOffer(Double offer) {
 		this.offer = offer;
 	}
-	public Integer getFanAdId() {
-		return fanAdId;
+	public int getAdFK() {
+		return adFK;
 	}
-	public void setFanAdId(Integer fanAdId) {
-		this.fanAdId = fanAdId;
+	public void setAdFK(int adFK) {
+		this.adFK = adFK;
 	}
+	
 	
 	
 }

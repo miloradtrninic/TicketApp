@@ -2,6 +2,7 @@ package com.msmisa.TicketApp.dao.fan;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
@@ -32,9 +33,10 @@ public class FanItemDaoImpl extends AbstractGenericDao<FanItem, Integer> impleme
 			return getSessionFactory()
 					.getCurrentSession()
 					.createCriteria(FanItem.class)
-					.createAlias("fanZone", "fz")
+					.createAlias("fanzone", "fz")
 					.add(Restrictions.eq("fz.id", zoneID))
-					.add(Restrictions.isNull("reservedBy"))
+					.add(Restrictions.isNull("this.reservedBy"))
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 					.list();
 		} catch (HibernateException e) {
 			throw new DaoException(e.getMessage());
@@ -50,12 +52,15 @@ public class FanItemDaoImpl extends AbstractGenericDao<FanItem, Integer> impleme
 						.add(Restrictions.eq("username", username))
 						.setMaxResults(1)
 						.list();
+			
 			User user = users.get(0);
+			logger.info("username reserve " + user.getUsername());
 			FanItem item = get(id);
+			logger.info("item id" + item.getId());
 			if(item.getReservedBy() != null) {
+				logger.info("won't reserve");
 				return item;
 			}
-			getSessionFactory().getCurrentSession().lock(item, LockMode.OPTIMISTIC);
 			item.setReservedBy(user);
 			return update(item);
 		} catch (HibernateException e) {

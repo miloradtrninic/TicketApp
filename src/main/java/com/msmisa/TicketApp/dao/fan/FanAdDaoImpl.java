@@ -3,8 +3,11 @@ package com.msmisa.TicketApp.dao.fan;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
+import org.hibernate.Session.LockRequest;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -36,6 +39,8 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 					.createCriteria(FanAd.class)
 					.createAlias("admin", "a")
 					.add(Restrictions.eq("a.username", username))
+					.add(Restrictions.isNull("accepted"))
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 					.list();
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
@@ -52,7 +57,8 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 					.createAlias("fanZone", "fz")
 					.createAlias("fz.admin", "fza")
 					.add(Restrictions.eq("fza.username", adminUsername))
-					.add(Restrictions.le("expirationDate", new Date()))
+					.add(Restrictions.ge("expirationDate", new Date()))
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 					.list();
 		} catch(HibernateException e){
 			throw new DaoException(e.getMessage());
@@ -69,7 +75,8 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 					.createCriteria(FanAd.class)
 					.createAlias("fanZone", "fz")
 					.add(Restrictions.eq("fz.id", zoneID))
-					.add(Restrictions.le("expirationDate", new Date()))
+					.add(Restrictions.ge("expirationDate", new Date()))
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 					.list();
 		} catch (HibernateException e) {
 			throw new DaoException(e.getMessage());
@@ -86,7 +93,8 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 				.createCriteria(FanAd.class)
 				.createAlias("postedBy", "user")
 				.add(Restrictions.eq("user.username", username))
-				.add(Restrictions.le("expirationDate", new Date()))
+				.add(Restrictions.ge("expirationDate", new Date()))
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 		} catch(Exception e) {
 			throw new DaoException(e.getMessage());
@@ -105,7 +113,11 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 		Bid acceptedBid = getSessionFactory().getCurrentSession().get(Bid.class, bidId);
 		FanAd ad = ads.get(0);
 		if(ad.getPostedBy().getUsername().equals(username) && acceptedBid != null) {
+			LockRequest lockRequest = getSessionFactory().getCurrentSession().buildLockRequest(new LockOptions(LockMode.OPTIMISTIC).setScope(true));
+			lockRequest.lock(ad);
 			ad.setAcceptedBid(acceptedBid);
+			ad.getAcceptedBid().setAccepted(true);
+			ad.getBidList().forEach(bid -> bid.setAccepted(false));
 			ad = update(ad);
 		}
 		return ad;
@@ -114,7 +126,7 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 	@Override
 	public FanAd changeAppove(Integer id, boolean approved) throws DaoException {
 		FanAd ad = getSessionFactory().getCurrentSession().get(FanAd.class, id);
-		getSessionFactory().getCurrentSession().lock(ad, LockMode.OPTIMISTIC);
+		//getSessionFactory().getCurrentSession().lock(ad, LockMode.OPTIMISTIC);
 		ad.setAccepted(approved);
 		return update(ad);
 	}
@@ -124,7 +136,7 @@ public class FanAdDaoImpl extends AbstractGenericDao<FanAd, Integer> implements 
 		if(ad.getAdmin() != null) {
 			return ad;
 		}
-		getSessionFactory().getCurrentSession().lock(ad, LockMode.OPTIMISTIC);
+		//getSessionFactory().getCurrentSession().lock(ad, LockMode.OPTIMISTIC);
 		List<User> users = getSessionFactory()
 			.getCurrentSession()
 			.createCriteria(User.class)

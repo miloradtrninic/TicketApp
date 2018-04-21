@@ -469,5 +469,4 @@ public class UserResource extends AbstractController<User, Integer> {
 			return new ResponseEntity<String>("Error fetching visits.", HttpStatus.NO_CONTENT);
 		}
 	}
-
 }

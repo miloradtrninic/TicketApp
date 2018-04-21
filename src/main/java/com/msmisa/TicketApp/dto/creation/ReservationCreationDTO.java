@@ -52,5 +52,5 @@ public class ReservationCreationDTO {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	
+
 }

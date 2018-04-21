@@ -81,11 +81,11 @@ public class FanAdResource extends AbstractController<FanAd, Integer> {
 	
 	@GetMapping(value="myads", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<FanAdPreviewDTO>> myAds(){
-		//TODO FANAD USER
-    	//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    	//String username = uauthentication.getName();
+		
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
 		FanAdDao dao = (FanAdDao) getDao();
-		List<FanAd> ads = dao.getFromUser("ADMIN");
+		List<FanAd> ads = dao.getFromUser(username);
 		
 		return new ResponseEntity<List<FanAdPreviewDTO>>(convertToDto((ads), FanAdPreviewDTO.class), HttpStatus.OK);
 	}
@@ -106,10 +106,8 @@ public class FanAdResource extends AbstractController<FanAd, Integer> {
 						   @RequestParam("image") MultipartFile file) {
 		if (!file.isEmpty()) {
 	        try {
-	        	//TODO FANAD USER
-	        	//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        	//User user = userDao.getByUserName(authentication.getName());
-	        	User user = userDao.getByUserName("ADMIN");
+	        	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        	User user = userDao.getByUserName(authentication.getName());
 	        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 	        	FanZone zone = zoneDao.get(fanzoneId);
 				FanAd fanAd = new FanAd();
