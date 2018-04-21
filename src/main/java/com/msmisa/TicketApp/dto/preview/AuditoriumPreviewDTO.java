@@ -7,6 +7,7 @@ public class AuditoriumPreviewDTO {
 	private String description;
 	private String entity_type;
 	private Integer ratings;
+	private FanZonePreviewDTO fanZone;
 	
 	public Integer getId() {
 		return id;
@@ -44,4 +45,11 @@ public class AuditoriumPreviewDTO {
 	public void setEntity_type(String entity_type) {
 		this.entity_type = entity_type;
 	}
+	public FanZonePreviewDTO getFanZone() {
+		return fanZone;
+	}
+	public void setFanZone(FanZonePreviewDTO fanZone) {
+		this.fanZone = fanZone;
+	}
+	
 }

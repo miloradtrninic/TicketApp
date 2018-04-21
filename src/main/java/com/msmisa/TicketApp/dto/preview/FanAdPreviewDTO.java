@@ -13,11 +13,12 @@ public class FanAdPreviewDTO {
 	private Date dateCreated;
 	private String imagePath;
 	private UserPreviewDTO postedBy;
+	private UserPreviewDTO admin;
 	private Boolean accepted;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date expirationDate;
 	private List<BidPreviewDTO> bidList;
-	
+	private BidPreviewDTO acceptedBid;
 	public Integer getId() {
 		return id;
 	}
@@ -71,6 +72,18 @@ public class FanAdPreviewDTO {
 	}
 	public void setBidList(List<BidPreviewDTO> bidList) {
 		this.bidList = bidList;
+	}
+	public UserPreviewDTO getAdmin() {
+		return admin;
+	}
+	public void setAdmin(UserPreviewDTO admin) {
+		this.admin = admin;
+	}
+	public BidPreviewDTO getAcceptedBid() {
+		return acceptedBid;
+	}
+	public void setAcceptedBid(BidPreviewDTO acceptedBid) {
+		this.acceptedBid = acceptedBid;
 	}
 	
 	

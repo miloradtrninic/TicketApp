@@ -100,8 +100,8 @@ public class FanItemResource extends AbstractController<FanItem, Integer>{
 	@GetMapping(value="reserve/{itemId}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<FanItemPreviewDTO> reserve(@PathVariable("itemId") Integer id) {
 		FanItemDao dao = (FanItemDao) getDao();
-		//TODO Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		FanItem item = dao.reserve("admin", id);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		FanItem item = dao.reserve(authentication.getName(), id);
 		return new ResponseEntity<FanItemPreviewDTO>(convertToDto(item, FanItemPreviewDTO.class), HttpStatus.OK);
 	}
 	
