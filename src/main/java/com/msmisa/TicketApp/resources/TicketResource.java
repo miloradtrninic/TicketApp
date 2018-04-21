@@ -73,6 +73,9 @@ public class TicketResource extends AbstractController<Ticket, Integer>{
 						t.setSeating(seat);
 						t.setProjection(term.getProjection());
 						t.setTime(term.getDate());
+						t.setDiscount(term.getDiscount() ? 1 : 0);
+						t.setQuickReservation(false);
+						t.setVersion(0);
 						ticks.add(modelMapper.map(tickDao.insert(t), TicketPreviewDTO.class));
 					}
 				}

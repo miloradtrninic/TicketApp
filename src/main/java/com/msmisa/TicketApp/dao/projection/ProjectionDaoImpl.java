@@ -25,10 +25,10 @@ public class ProjectionDaoImpl extends AbstractGenericDao<Projection, Integer> i
 		try {
 			return getSessionFactory()
 					.getCurrentSession()
-					.createQuery("select wp.pk.projection from WatchedProjection wp"
-							+ "JOIN wp.pk.user u"
-							+ "JOIN wp.pk.projection p"
-							+ "WHERE u.username == :usern")
+					.createQuery("select wp.pk.projection from WatchedProjection wp "
+							+ " JOIN wp.pk.user u "
+							+ " JOIN wp.pk.projection p "
+							+ " WHERE u.username = :usern ")
 					.setParameter("usern", username)
 					.list();
 		} catch(Exception e) {

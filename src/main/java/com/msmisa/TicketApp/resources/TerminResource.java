@@ -62,6 +62,7 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addNew(@DTO(TerminCreationDTO.class) Termin termin) {
+		System.out.println("Projekcija ID: " + termin.getProjection().getId());
 		return new ResponseEntity<TerminPreviewDTO>(convertToDto(getDao().insert(termin), TerminPreviewDTO.class), HttpStatus.OK);
 	}
 

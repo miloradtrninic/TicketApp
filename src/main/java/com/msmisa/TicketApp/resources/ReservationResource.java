@@ -119,7 +119,7 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	}
 	
 	@PostMapping(value="/new", consumes= {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<?> createReservation(ReservationCreationDTO res, WebRequest req) {
+	public ResponseEntity<?> createReservation(@RequestBody ReservationCreationDTO res, WebRequest req) {
 		ResponseEntity<?> ret = null;
 		
 		try {

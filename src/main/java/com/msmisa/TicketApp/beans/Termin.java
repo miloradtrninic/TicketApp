@@ -44,7 +44,7 @@ public class Termin {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@ManyToOne(optional=false, fetch=FetchType.LAZY)
+	@ManyToOne(optional=false, fetch=FetchType.EAGER)
 	public Projection getProjection() {
 		return projection;
 	}
