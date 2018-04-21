@@ -1,8 +1,10 @@
 package com.msmisa.TicketApp.resources;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.Cinema;
+import com.msmisa.TicketApp.beans.Play;
 import com.msmisa.TicketApp.beans.Theatre;
+import com.msmisa.TicketApp.dao.auditorium.TheatreDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.TheatreCreationDTO;
 import com.msmisa.TicketApp.dto.preview.CinemaPreviewDTO;
+import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
 import com.msmisa.TicketApp.dto.update.CinemaUpdateDTO;
 import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
@@ -26,6 +31,9 @@ import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
 @RestController
 @RequestMapping(value="/theatre")
 public class TheatreResource extends AbstractController<Theatre, Integer> {
+	
+	@Autowired
+	private TheatreDao theatreDao;
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TheatrePreviewDTO>> getAll(){
@@ -36,6 +44,13 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 		else
 			return new ResponseEntity<List<TheatrePreviewDTO>>(theatreDtoList,HttpStatus.OK);
 
+	}
+	
+	@GetMapping(value="getAllPlays/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
+	public List<PlayPreviewDTO> getAllPlays(@PathVariable("id") Integer id) {
+		Set<Play> theatres = theatreDao.getAllPlays(id);
+		List<PlayPreviewDTO> plays = theatres.stream().map(p -> modelMapper.map(p, PlayPreviewDTO.class)).collect(Collectors.toList());
+		return plays;
 	}
 
 

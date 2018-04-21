@@ -24,6 +24,7 @@ public class Reservation {
 	private Integer id;
 	private User reservedBy;
 	private Set<Ticket> ticketList;
+	private Double price;
 	
 	
 	@Id
@@ -50,6 +51,12 @@ public class Reservation {
 	}
 	public void setTicketList(Set<Ticket> ticketList) {
 		this.ticketList = ticketList;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 	
 	

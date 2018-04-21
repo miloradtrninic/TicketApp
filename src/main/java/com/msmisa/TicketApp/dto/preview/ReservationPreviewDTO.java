@@ -11,6 +11,7 @@ public class ReservationPreviewDTO {
 	private UserPreviewDTO reservedBy;
 	//@ForeignKeyDTO(clazzFK=TicketCreationDTO.class)
 	private List<TicketPreviewDTO> ticketList;
+	private Double price;
 	
 	public Integer getId() {
 		return id;
@@ -29,6 +30,12 @@ public class ReservationPreviewDTO {
 	}
 	public void setTicketList(List<TicketPreviewDTO> ticketList) {
 		this.ticketList = ticketList;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 	
 	
