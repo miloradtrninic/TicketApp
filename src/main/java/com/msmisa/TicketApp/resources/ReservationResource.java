@@ -13,10 +13,13 @@ import java.util.stream.Collectors;
 import org.assertj.core.util.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import com.msmisa.TicketApp.beans.Auditorium;
+import com.msmisa.TicketApp.beans.Hall;
+import com.msmisa.TicketApp.beans.Invitation;
+import com.msmisa.TicketApp.beans.Projection;
 import com.msmisa.TicketApp.beans.Reservation;
 import com.msmisa.TicketApp.beans.Ticket;
 import com.msmisa.TicketApp.beans.User;
@@ -39,6 +45,7 @@ import com.msmisa.TicketApp.dao.auditorium.AuditoriumDao;
 import com.msmisa.TicketApp.dao.hall.SeatingDao;
 import com.msmisa.TicketApp.dao.ticket.ReservationDao;
 import com.msmisa.TicketApp.dao.ticket.TicketDao;
+import com.msmisa.TicketApp.dao.user.InvitationDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.ReservationCreationDTO;
@@ -63,6 +70,13 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	
 	@Autowired
 	private SeatingDao seatDao;
+	
+	
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	@Autowired
+	private InvitationDao invDao;
 	
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -118,32 +132,34 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 		return ret;
 	}
 	
-	@PostMapping(value="/new", consumes= {"application/json"}, produces= {"application/json"})
+	@PostMapping(value="/new", consumes= MediaType.APPLICATION_JSON_VALUE, produces= MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createReservation(@RequestBody ReservationCreationDTO res, WebRequest req) {
 		ResponseEntity<?> ret = null;
 		
 		try {
-			List<Ticket> resTicketList = tickDao.getAllIn(res.getTicketList());
-			List<User> invitedUsers = userDao.getAllIn(res.getInvitedUsersID());
-			List<Ticket> allTickets = tickDao.getAll();
-			
-			for(Ticket t : allTickets) {
-				for(Ticket ut : resTicketList) {
-					if(ut.getId().equals(t.getId()) && !t.getVersion().equals(ut.getVersion())) {
-						ret = new ResponseEntity<String>("Try again with different selections.", HttpStatus.CONFLICT);
-						break;
-					}
-				}
+			List<Ticket> resTicketList = new ArrayList<Ticket>();
+			List<User> invitedUsers = new ArrayList<User>();
+			for(Integer key : res.getInvitedUsersID()) {
+				User u = userDao.get(key);
+				invitedUsers.add(u);
+			}
+			for(Integer key : res.getTicketList()) {
+				Ticket t = tickDao.get(key);
+				resTicketList.add(t);
 			}
 			
-			if(ret == null) {
-				Reservation r = new Reservation();
-				r.setReservedBy(userDao.get(res.getReservedBy()));
-				r.setTicketList(new HashSet<Ticket>(resTicketList));
-				String appUrl = req.getContextPath();
-				eventPublisher.publishEvent(new OnReservationCompleteEvent(appUrl, new Locale("en"), r, invitedUsers));
-				r.setTicketList(resTicketList.stream().map(t -> t = tickDao.update(t)).collect(Collectors.toSet()));
-				ret = new ResponseEntity<ReservationPreviewDTO>(convertToDto(r, ReservationPreviewDTO.class), HttpStatus.OK);
+			
+			Reservation r = new Reservation();
+			r.setReservedBy(userDao.get(res.getReservedBy()));
+			r.setTicketList(new HashSet<Ticket>(resTicketList));
+			r.setTicketList(new HashSet<Ticket>(resTicketList));
+			ret = new ResponseEntity<ReservationPreviewDTO>(convertToDto(r, ReservationPreviewDTO.class), HttpStatus.OK);
+			
+			confirmReservation(r, res.getPrice().intValue());
+			
+			int i = 0;
+			for(User u : invitedUsers) {
+				sendInvitations(u, resTicketList.get(i++), r);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -151,6 +167,66 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 		}
 		
 		return ret;
+	}
+	
+	private void confirmReservation(Reservation r, int price) {
+
+		
+		for(Ticket t : r.getTicketList()) {
+			Projection proj = t.getProjection();
+			Hall h = t.getSeating().getHallSegment().getHall();
+			
+			String time = t.getTime().toString();
+			String projName = proj.getName();
+			Integer duration = proj.getDurationMinutes();
+			String auditName = h.getName();
+			
+			String text = "You successfully created a reservation for " + projName + ".";
+			text += "\n\nDuration: " + duration;
+			text+= "\n\nHall: " + auditName;
+			text+="\n\nTime: " + time;
+			text += "\n\nLocation: " + auditName;
+			text += "\n\nPrice: " + price;
+			String subject = "Reservation info";
+			
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setSubject(subject);
+			msg.setText(text);
+			msg.setTo(r.getReservedBy().getEmail());
+			
+			mailSender.send(msg);
+		}
+		
+	}
+	
+	private void sendInvitations(User u, Ticket t, Reservation r) {
+		
+		String reservedBy = r.getReservedBy().getUsername();
+		String linkToAcceptance = "localhost:4200/#/invitations/" + t.getId();
+		String projName = t.getProjection().getName();
+		Integer duration = t.getProjection().getDurationMinutes();
+		String hallName = t.getSeating().getHallSegment().getHall().getName();
+		String auditName = t.getSeating().getHallSegment().getHall().getAuditorium().getName();
+		
+		String text = "You are invited to join " + reservedBy + " in watching " + projName + ".";
+		text += "\n\nDuration: " + duration;
+		text+= "\n\nHall: " + hallName;
+		text+="\n\nTime: " + duration;
+		text += "\n\nLocation: " + auditName;
+		text += "\n\nClick this link to accept or decline: \n\n " + linkToAcceptance;
+		String subject = "Invitation from " + reservedBy;
+		
+		Invitation inv = new Invitation();
+		inv.setInvitedUser(u);
+		inv.setReservation(r);
+		invDao.insert(inv);
+		
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setSubject(subject);
+		msg.setText(text);
+		msg.setTo(u.getEmail());
+		
+		mailSender.send(msg);
 	}
 	
 	@Override

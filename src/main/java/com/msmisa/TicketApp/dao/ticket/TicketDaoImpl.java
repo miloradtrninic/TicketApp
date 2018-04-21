@@ -30,7 +30,6 @@ public class TicketDaoImpl extends AbstractGenericDao<Ticket, Integer> implement
 		try {
 			SessionFactory sf = getSessionFactory();
 			Ticket t = sf.getCurrentSession().get(Ticket.class, ticket.getId());
-			sf.getCurrentSession().lock(t, LockMode.OPTIMISTIC);
 			sf.getCurrentSession().saveOrUpdate(ticket);
 			return t;
 		} catch(Exception e) {

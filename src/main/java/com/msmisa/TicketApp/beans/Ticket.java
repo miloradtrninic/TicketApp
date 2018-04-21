@@ -30,8 +30,8 @@ public class Ticket {
 	private Integer discount;
 	private Boolean quickReservation;
 	@Version
-	@NotNull
-	private Integer version;
+	@Column(name="version")
+	private int version;
 	
 	
 	@Id
@@ -83,12 +83,4 @@ public class Ticket {
 	public void setQuickReservation(Boolean quickReservation) {
 		this.quickReservation = quickReservation;
 	}
-	public Integer getVersion() {
-		return version;
-	}
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-	
-	
 }
