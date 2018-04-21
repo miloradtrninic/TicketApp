@@ -31,7 +31,4 @@ public class AuditoriumCreationDTO {
 	public void setRatings(Integer ratings) {
 		this.ratings = ratings;
 	}
-
-
-
 }

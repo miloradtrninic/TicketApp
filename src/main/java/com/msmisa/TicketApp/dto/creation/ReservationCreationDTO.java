@@ -12,6 +12,7 @@ public class ReservationCreationDTO {
 	private Integer reservedBy;
 	private List<Integer> ticketList;
 	private List<Integer> invitedUsersID;
+	private Double price;
 
 	public Integer getId() {
 		return id;
@@ -43,4 +44,13 @@ public class ReservationCreationDTO {
 	public void setInvitedUsersID(List<Integer> invitedUsersID) {
 		this.invitedUsersID = invitedUsersID;
 	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
 }

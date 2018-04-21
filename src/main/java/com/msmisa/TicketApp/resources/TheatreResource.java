@@ -1,6 +1,7 @@
 package com.msmisa.TicketApp.resources;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msmisa.TicketApp.beans.Cinema;
+import com.msmisa.TicketApp.beans.Play;
 import com.msmisa.TicketApp.beans.Theatre;
 import com.msmisa.TicketApp.beans.UserAuditorium;
 import com.msmisa.TicketApp.dao.auditorium.AuditoriumDao;
+import com.msmisa.TicketApp.dao.auditorium.TheatreDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.TheatreCreationDTO;
 import com.msmisa.TicketApp.dto.creation.UserAuditoriumCreationDTO;
 import com.msmisa.TicketApp.dto.preview.CinemaPreviewDTO;
+import com.msmisa.TicketApp.dto.preview.PlayPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.TheatrePreviewDTO;
 import com.msmisa.TicketApp.dto.preview.UserAuditoriumPreviewDTO;
 import com.msmisa.TicketApp.dto.update.CinemaUpdateDTO;
@@ -33,10 +37,13 @@ import com.msmisa.TicketApp.dto.update.TheatreUpdateDTO;
 @RestController
 @RequestMapping(value="/theatre")
 public class TheatreResource extends AbstractController<Theatre, Integer> {
-	
+
 	@Autowired
 	AuditoriumDao daoAud;
-	
+
+	@Autowired
+	private TheatreDao theatreDao;
+
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TheatrePreviewDTO>> getAll(){
 		List<Theatre> list = getDao().getAll();
@@ -47,8 +54,8 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 			return new ResponseEntity<List<TheatrePreviewDTO>>(theatreDtoList,HttpStatus.OK);
 
 	}
-	
-	
+
+
 	@PostMapping(value="/rate",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -57,6 +64,13 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
     	String username = authentication.getName();
 		UserAuditorium aud = daoAud.rateAuditorium(creation.getAutId(), username, creation.getRating());
 		return modelMapper.map(aud, UserAuditoriumPreviewDTO.class);
+	}
+
+	@GetMapping(value="getAllPlays/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
+	public List<PlayPreviewDTO> getAllPlays(@PathVariable("id") Integer id) {
+		Set<Play> theatres = theatreDao.getAllPlays(id);
+		List<PlayPreviewDTO> plays = theatres.stream().map(p -> modelMapper.map(p, PlayPreviewDTO.class)).collect(Collectors.toList());
+		return plays;
 	}
 
 
@@ -73,7 +87,7 @@ public class TheatreResource extends AbstractController<Theatre, Integer> {
 	public TheatrePreviewDTO getId (@PathVariable(value="id") Integer id) {
 		return convertToDto(getDao().get(id), TheatrePreviewDTO.class);
 	}
-	
+
 	@PutMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public TheatrePreviewDTO update(@RequestBody TheatreUpdateDTO entity){
 		logger.info("ovo je id aaaaaaaaaaaaa : " + entity.getId());

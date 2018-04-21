@@ -1,8 +1,11 @@
 package com.msmisa.TicketApp.dao.ticket;
 
+import java.util.List;
+
 import org.hibernate.LockMode;
 import org.hibernate.OptimisticLockException;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -32,6 +35,19 @@ public class TicketDaoImpl extends AbstractGenericDao<Ticket, Integer> implement
 			return t;
 		} catch(Exception e) {
 			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Ticket> getTicketsForProjection(Integer id) {
+		try {
+			SessionFactory sf = getSessionFactory();
+			return sf.getCurrentSession()
+					.createCriteria(Ticket.class)
+					.add(Restrictions.eq("projection_id", id))
+					.list();
+		} catch(Exception e) {
+			e.printStackTrace();;
 			return null;
 		}
 	}

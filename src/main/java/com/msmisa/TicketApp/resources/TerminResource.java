@@ -1,7 +1,9 @@
 package com.msmisa.TicketApp.resources;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msmisa.TicketApp.beans.Hall;
+import com.msmisa.TicketApp.beans.HallSegment;
+import com.msmisa.TicketApp.beans.Seating;
 import com.msmisa.TicketApp.beans.Termin;
+import com.msmisa.TicketApp.beans.Ticket;
 import com.msmisa.TicketApp.dao.hall.HallDao;
 import com.msmisa.TicketApp.dao.projection.ProjectionDao;
+import com.msmisa.TicketApp.dao.projection.TerminDao;
+import com.msmisa.TicketApp.dao.ticket.TicketDao;
 import com.msmisa.TicketApp.dto.DTO;
 import com.msmisa.TicketApp.dto.creation.TerminCreationDTO;
 import com.msmisa.TicketApp.dto.preview.TerminPreviewDTO;
+import com.msmisa.TicketApp.dto.preview.TicketPreviewDTO;
 import com.msmisa.TicketApp.dto.update.TerminUpdateDTO;
 
 @RestController
@@ -30,8 +39,12 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 
 	@Autowired
 	ProjectionDao projectionDao;
+
 	@Autowired
 	HallDao hallDao;
+	
+	@Autowired
+	TicketDao tickDao;
 	
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,10 +62,9 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addNew(@DTO(TerminCreationDTO.class) Termin termin) {
+		System.out.println("Projekcija ID: " + termin.getProjection().getId());
 		return new ResponseEntity<TerminPreviewDTO>(convertToDto(getDao().insert(termin), TerminPreviewDTO.class), HttpStatus.OK);
 	}
-
-
 
 	@GetMapping(value="{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getId (@PathVariable(value="id") Integer id) {
@@ -67,5 +79,4 @@ public class TerminResource extends AbstractController<Termin, Integer>{
 		termin.setPrice(entity.getPrice());
 		return convertToDto(getDao().update(termin), TerminPreviewDTO.class);
 	}
-	
 }

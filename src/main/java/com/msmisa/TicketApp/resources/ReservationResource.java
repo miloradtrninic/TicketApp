@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -35,6 +36,7 @@ import com.msmisa.TicketApp.beans.Ticket;
 import com.msmisa.TicketApp.beans.User;
 import com.msmisa.TicketApp.beans.Reservation;
 import com.msmisa.TicketApp.dao.auditorium.AuditoriumDao;
+import com.msmisa.TicketApp.dao.hall.SeatingDao;
 import com.msmisa.TicketApp.dao.ticket.ReservationDao;
 import com.msmisa.TicketApp.dao.ticket.TicketDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
@@ -58,6 +60,9 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private SeatingDao seatDao;
 	
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -92,16 +97,14 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	}
 	
 	@PutMapping(value="/update", consumes= {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<?> updateInfo(@RequestBody ReservationPreviewDTO update) {
+	public ResponseEntity<?> updateInfo(@RequestBody ReservationCreationDTO update) {
 		ResponseEntity<?> ret = null;
 
 		try {
 			Reservation r = reservationDao.get(update.getId());
-			r.setReservedBy(r.getReservedBy());
-			List<Integer> keys = new ArrayList<Integer>();
+			List<Integer> keys = update.getTicketList();
 			
-			keys = r.getTicketList().stream().map(t -> t.getId()).collect(Collectors.toList());
-			r.setTicketList((Set<Ticket>) tickDao.getAllIn(keys));
+			r.setTicketList(new HashSet<Ticket>(tickDao.getAllIn(keys)));
 
 			Reservation toRet = reservationDao.update(r);
 
@@ -116,23 +119,27 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 	}
 	
 	@PostMapping(value="/new", consumes= {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<?> createReservation(ReservationCreationDTO res, WebRequest req) {
-		List<Ticket> resTicketList = tickDao.getAllIn(res.getTicketList());
-		List<User> invitedUsers = userDao.getAllIn(res.getInvitedUsersID());
-		List<Ticket> allTickets = tickDao.getAll();
+	public ResponseEntity<?> createReservation(@RequestBody ReservationCreationDTO res, WebRequest req) {
 		ResponseEntity<?> ret = null;
+		
 		try {
+			List<Ticket> resTicketList = tickDao.getAllIn(res.getTicketList());
+			List<User> invitedUsers = userDao.getAllIn(res.getInvitedUsersID());
+			List<Ticket> allTickets = tickDao.getAll();
+			
 			for(Ticket t : allTickets) {
 				for(Ticket ut : resTicketList) {
 					if(ut.getId().equals(t.getId()) && !t.getVersion().equals(ut.getVersion())) {
 						ret = new ResponseEntity<String>("Try again with different selections.", HttpStatus.CONFLICT);
+						break;
 					}
 				}
 			}
+			
 			if(ret == null) {
 				Reservation r = new Reservation();
 				r.setReservedBy(userDao.get(res.getReservedBy()));
-				r.setTicketList(Sets.newHashSet(resTicketList));
+				r.setTicketList(new HashSet<Ticket>(resTicketList));
 				String appUrl = req.getContextPath();
 				eventPublisher.publishEvent(new OnReservationCompleteEvent(appUrl, new Locale("en"), r, invitedUsers));
 				r.setTicketList(resTicketList.stream().map(t -> t = tickDao.update(t)).collect(Collectors.toSet()));
@@ -155,14 +162,24 @@ public class ReservationResource extends AbstractController<Reservation, Integer
 		Ticket t = r.getTicketList().stream().findFirst().get();
 		Date projectionTime = t != null ? projectionTime = t.getTime() : null;
 		
-		if(projectionTime != null) {
-			if(canCancel(cancelationTime, projectionTime)) {
-				reservationDao.delete(r.getId());
-				return new ResponseEntity<String>("Success canceling reservation", HttpStatus.OK);
+		try {
+			if(projectionTime != null) {
+				if(canCancel(cancelationTime, projectionTime)) {
+					for(Ticket ticket : r.getTicketList()) {
+						ticket.getSeating().setReserved(false);
+						seatDao.update(t.getSeating());
+						reservationDao.delete(r.getId());
+						tickDao.delete(t.getId());
+					}
+					return new ResponseEntity<String>("Success canceling reservation", HttpStatus.OK);
+				} else {
+					return new ResponseEntity<String>("Error. Reservations can be canceled up to 30 minutes before the begining.", HttpStatus.NOT_ACCEPTABLE);
+				}
 			} else {
-				return new ResponseEntity<String>("Error. Reservations can be canceled up to 30 minutes before the begining.", HttpStatus.NOT_ACCEPTABLE);
+				return new ResponseEntity<String>("Error canceling reservation", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} else {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>("Error canceling reservation", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -25,10 +25,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msmisa.TicketApp.beans.Auditorium;
+import com.msmisa.TicketApp.beans.Movie;
+import com.msmisa.TicketApp.beans.Play;
+import com.msmisa.TicketApp.beans.Projection;
+import com.msmisa.TicketApp.beans.Theatre;
 import com.msmisa.TicketApp.beans.User;
 import com.msmisa.TicketApp.beans.UserRole;
+import com.msmisa.TicketApp.beans.WatchedProjection;
+import com.msmisa.TicketApp.dao.projection.ProjectionDao;
 import com.msmisa.TicketApp.dao.user.UserDao;
 import com.msmisa.TicketApp.dao.user.UserRoleDao;
+import com.msmisa.TicketApp.dto.preview.AuditoriumPreviewDTO;
 import com.msmisa.TicketApp.dto.preview.UserPreviewDTO;
 import com.msmisa.TicketApp.dto.update.UserRolesUpdateDTO;
 import com.msmisa.TicketApp.dto.update.UserUpdateStatusDTO;
@@ -45,6 +53,9 @@ public class UserResource extends AbstractController<User, Integer> {
 	@Autowired
 	private UserRoleDao userRoleDao;
 
+	@Autowired
+	private ProjectionDao projDao;
+	
 	@Autowired
 	private UserDao userDao;
 
@@ -433,5 +444,29 @@ public class UserResource extends AbstractController<User, Integer> {
 			return new ResponseEntity<UserPreviewDTO>(convertToDto(user, UserPreviewDTO.class), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+	@GetMapping(value="/getVisited/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getWatched(@PathVariable("id") Integer id) {
+		try{
+			User u = userDao.get(id);
+			List<Projection> projections = projDao.getWatchedBy(u.getUsername());
+			Set<Auditorium> auditoriums = new HashSet<Auditorium>();
+			
+			for(Projection p : projections) {
+				if(p instanceof Movie) {
+					auditoriums.add(((Movie) p).getCinema());
+				} else if (p instanceof Play) {
+					auditoriums.add(((Play) p).getTheatre());
+				}
+			}
+			
+			Set<AuditoriumPreviewDTO> audPreview = auditoriums.stream().map(a -> modelMapper.map(a, AuditoriumPreviewDTO.class))
+														.collect(Collectors.toSet());
+			
+			return new ResponseEntity<Set<AuditoriumPreviewDTO>>(audPreview, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Error fetching visits.", HttpStatus.NO_CONTENT);
+		}
+	}
 }
